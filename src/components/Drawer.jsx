@@ -8,7 +8,8 @@ export default function Drawer({ drawerActive, children, sideBar, onEmit }) {
       <div className="drawer-content flex flex-col items-center justify-center">
         {/* Page content here */}
         {/* <label htmlFor="my-drawer-2" className="btn btn-primary drawer-button lg:hidden">Open drawer</label> */}
-        <div className='lg:hidden'>
+        {/* <div className='lg:hidden'> */}
+        <div className=''>
           { children }
         </div>
 

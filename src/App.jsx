@@ -11,10 +11,8 @@ function App() {
         <header className="sticky top-0 z-50">
           <Navbar />
         </header>
-        <main className={`relative flex grow ${location.pathname !== '/'}`}>
-          <div className='flex-1'>
-            <Outlet />
-          </div>
+        <main className={`grow`}>
+          <Outlet />
         </main>
         <footer>
           <Footer />

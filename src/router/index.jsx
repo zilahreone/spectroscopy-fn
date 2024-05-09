@@ -6,7 +6,17 @@ import MeasurementsPage from "../pages/MeasurementsPage";
 import LoginPage from "../pages/LoginPage";
 import AnalysisPage from "../pages/AnalysisPage";
 import AboutPage from "../pages/AboutPage";
+import SpectraPage from "../pages/SpectraPage";
 
+const parent = (children) => {
+  return <>
+  <div class="max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+      {children}
+    {/* <div className="flex flex-row grow justify-center">
+    </div> */}
+  </div>
+  </>
+}
 const router = createBrowserRouter([
   {
     path: '/',
@@ -19,11 +29,15 @@ const router = createBrowserRouter([
       },
       {
         path: 'measurements',
-        element: <MeasurementsPage />
+        element: parent(<MeasurementsPage />)
       },
       {
         path: 'analysis',
         element: <AnalysisPage />
+      },
+      {
+        path: 'spectra',
+        element: parent(<SpectraPage />)
       },
       {
         path: 'about',
