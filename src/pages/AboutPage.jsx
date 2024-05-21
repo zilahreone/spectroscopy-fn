@@ -3,9 +3,9 @@ import React from 'react'
 export default function AboutPage() {
   return (
     <>
-      <div class="flex gap-x-4">
+      <div className="flex gap-x-4">
         <div>
-          <img src='https://www.nectec.or.th/sectionImage/10439' class="object-contain" />
+          <img src='https://www.nectec.or.th/sectionImage/10439' className="object-contain" />
         </div>
         <div>
           ทีมวิจัยเทคโนโลยีเทระเฮิรตซ์ (TRT)<br />

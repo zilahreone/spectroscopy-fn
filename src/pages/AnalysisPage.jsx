@@ -17,7 +17,6 @@ export default function AnalysisPage() {
   useEffect(() => {
   }, [])
 
-
   const wave2freq = (wave) => {
     const c = 3e8 // speed of light [m/s]
     const k = wave * 1e2 // wavenumber [m-1]

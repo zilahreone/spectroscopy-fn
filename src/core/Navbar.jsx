@@ -20,6 +20,10 @@ export default function Navbar() {
       path: 'spectra'
     },
     {
+      name: 'List',
+      path: 'list'
+    },
+    {
       name: 'About',
       path: 'about'
     }
