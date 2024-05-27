@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function InputForm({required, type, tlLabel, trLabel, blLabel, brLabel, placeholder, children, onEmit}) {
+export default function InputForm({required, value, type, tlLabel, trLabel, blLabel, brLabel, placeholder, children, onEmit, onKeyDown}) {
   return (
     <div>
       <label className="form-control w-full">
@@ -11,7 +11,7 @@ export default function InputForm({required, type, tlLabel, trLabel, blLabel, br
         {
           children
             ? children
-            : <input onInput={(e) => onEmit(e.target.value)} type={`${'text' && type}`} placeholder={placeholder} className="input input-bordered input-primary input-sm" required={required} />
+            : <input onKeyDown={(e) => onKeyDown(e.code)} onInput={(e) => onEmit(e.target.value)} value={value} type={`${'text' && type}`} placeholder={placeholder} className="input input-bordered input-primary input-sm" required={required} />
         }
         <div className="label">
           <span className="label-text-alt">{ blLabel }</span>
