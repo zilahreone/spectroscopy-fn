@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import keycloak from '../service/keycloak'
+// import Cookies from 'js-cookie'
+// import { googleLogout } from '@react-oauth/google'
 
 export default function Navbar() {
   const menus = [
@@ -13,21 +16,25 @@ export default function Navbar() {
     },
     {
       name: 'Analysis',
-      path: 'analysis'
+      path: '/analysis'
     },
     {
       name: 'Spectra',
-      path: 'spectra'
+      path: '/spectra'
     },
     {
       name: 'List',
-      path: 'list'
+      path: '/list'
     },
     {
       name: 'About',
-      path: 'about'
+      path: '/about'
     }
   ]
+  const handleLogout = () => {
+    keycloak.logout()
+  }
+
   return (
     <div className="navbar bg-red-100">
       <div className="navbar-start">
@@ -55,7 +62,7 @@ export default function Navbar() {
             menus.map((menu, index) => (
               <li key={index}>
                 <Link to={menu.path}>
-                  <div>{ menu.name }</div>
+                  <div>{menu.name}</div>
                   {/* <a>{ menu.name }</a> */}
                 </Link>
               </li>
@@ -74,10 +81,10 @@ export default function Navbar() {
         </ul>
       </div>
       <div className="navbar-end">
-        <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-            <div className="w-10 rounded-full">
-              <img alt="Tailwind CSS Navbar component" src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+        <div tabIndex={0} role="button" className="dropdown dropdown-end">
+          <div className="avatar placeholder btn btn-ghost btn-circle">
+            <div className="bg-neutral text-neutral-content rounded-full w-10">
+              <span className="text-l">{ keycloak.tokenParsed.name.split(/\s+/g).map(n => n.charAt(0)).join('') }</span>
             </div>
           </div>
           <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
@@ -88,7 +95,7 @@ export default function Navbar() {
               </a>
             </li>
             <li><a>Settings</a></li>
-            <li><a>Logout</a></li>
+            <li><button onClick={() => handleLogout()}>Logout</button></li>
           </ul>
         </div>
       </div>

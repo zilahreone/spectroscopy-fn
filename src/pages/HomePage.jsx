@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Stat from '../components/Stat'
 import Button from '../components/actions/Button'
+import { Link } from 'react-router-dom'
+import keycloak from '../service/keycloak'
 
 export default function HomePage() {
+  // useEffect(() => {
+  //   console.log(keycloak.token);
+  // }, [])
   return (
     <div className="hero min-h-screen" style={{ backgroundImage: 'url(https://www.nectec.or.th/sectionImage/10439)' }}>
       <div className="hero-overlay bg-opacity-20"></div>
@@ -13,7 +18,9 @@ export default function HomePage() {
           <Stat title={'Organizations'} value={4} />
         </div>
         <div className='pt-2'>
-          <Button name={'View all Spectra'} color={'primary'} className={'w-full'}  />
+          <Link to={'list'}>
+            <Button name={'View all Spectra'} color={'primary'} className={'w-full'} />
+          </Link>
         </div>
       </div>
     </div>

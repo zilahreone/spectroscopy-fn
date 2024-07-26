@@ -11,7 +11,7 @@ export default function InputForm({required, value, type, tlLabel, trLabel, blLa
         {
           children
             ? children
-            : <input onKeyDown={(e) => onKeyDown(e.code)} onInput={(e) => onEmit(e.target.value)} value={value} type={`${'text' && type}`} placeholder={placeholder} className="input input-bordered input-primary input-sm" required={required} />
+            : <input onKeyDown={(e) => onKeyDown && onKeyDown(e.code)} onInput={(e) => onEmit(e.target.value)} value={value || ''} type={`${'text' && type}`} placeholder={placeholder} className="input input-bordered input-primary input-sm" required={required} />
         }
         <div className="label">
           <span className="label-text-alt">{ blLabel }</span>

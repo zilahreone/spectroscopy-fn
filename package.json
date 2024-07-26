@@ -10,6 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-keycloak/web": "^3.4.0",
+    "@react-oauth/google": "^0.12.1",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
+    "keycloak-js": "^25.0.0",
     "plotly.js": "^2.32.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
