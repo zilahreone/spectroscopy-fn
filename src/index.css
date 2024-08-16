@@ -2,13 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    font-family: 'Prompt', system-ui, sans-serif;
-    font-weight: 300;
-    font-size: medium;
+
+@layer components {
+  .navbar-gradient {
+    /* background: #1b3a4b; */
+    /* background: rgb(166, 254, 255);
+    background: linear-gradient(90deg, rgb(106, 163, 163) 0%, rgba(20, 69, 82, 1) 100%); */
+    background: rgb(255, 255, 255);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.18102240896358546) 0%, rgba(77, 25, 77, 1) 100%);
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text
+  }
+
+  /* .input-sm {
+    height: 2.50rem;
+  } */
+
+  .button-hover-animation {
+    @apply transition duration-200 ease-in-out transform hover:-translate-y-1 hover:scale-110
   }
 }
+
+@layer base {
+  html {
+    /* font-family: 'Prompt', sans-serif; */
+    font-weight: 300;
+    /* font-size: medium; */
+  }
+}
+
+footer .footer-gradient {
+  /* background: rgb(32, 225, 235);
+  background: linear-gradient(45deg, rgba(32, 225, 235, 0.29541135301776966) 0%, rgba(93, 57, 245, 1) 100%); */
+  background: rgb(0, 100, 102);
+  background: linear-gradient(90deg, rgba(0, 100, 102, 1) 0%, rgba(77, 25, 77, 1) 100%);
+}
+
+footer .footer-static {
+  background: #272640;
+}
+
+@media (min-width: 100px) {
+  .custom-container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .custom-container {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .custom-container {
+    padding-left: 100px;
+    padding-right: 100px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .custom-container {
+    padding-left: 250px;
+    padding-right: 250px;
+  }
+}
+
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

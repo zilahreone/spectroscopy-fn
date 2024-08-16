@@ -45,20 +45,18 @@ function App() {
   // }
   // }, [location])
   return (
-    <>
-        <Outlet />
-      {/* <div className='flex min-h-screen flex-col'> */}
-        {/* <header className="sticky top-0 z-50">
-          <Navbar />
-        </header> */}
-        {/* <main className="grow">
-          <Outlet />
-        </main> */}
-        {/* <footer>
-          <Footer />
-        </footer> */}
-      {/* </div> */}
-    </>
+    <Outlet />
+    // <div className='flex min-h-screen flex-col'>
+    //   <header className="sticky top-0 z-50">
+    //     <Navbar />
+    //   </header>
+    //   <main className="grow">
+    //     <Outlet />
+    //   </main>
+    //   <footer>
+    //     <Footer />
+    //   </footer>
+    // </div>
   )
 }
 

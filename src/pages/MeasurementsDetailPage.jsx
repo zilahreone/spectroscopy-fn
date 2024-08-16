@@ -65,9 +65,9 @@ export default function MeasurementsDetailPage() {
   return (
     <>
       <div>MeasurementsDetailPage {measurementId}</div>
-      <pre>
+      {/* <pre>
         {JSON.stringify(experiment, null, 2)}
-      </pre>
+      </pre> */}
       <div class="grid sm:grid-cols-2 grid-cols-1 md:gap-x-4 lg:gap-x-8  gap-x-2">
         <InputForm tlLabel={'Experiment name'} value={experiment.experiment_name} onEmit={(val) => setExperiment({ ...experiment, experiment_name: val })} required />
         <InputForm tlLabel={'Chemical name'} value={experiment.chemical_name} onEmit={(val) => setExperiment({ ...experiment, chemical_name: val })} required />
