@@ -1,62 +1,43 @@
-import React, { useEffect } from 'react'
-import { useMatches } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useLocation, useMatches, useNavigate } from 'react-router-dom';
 
 export default function Breadcrumbs() {
   const matches = useMatches();
+  const navigator = useNavigate()
+  let location = useLocation()
 
   useEffect(() => {
-    console.log(matches);
+    // const crumbs = matches.filter(match => !match.id.includes(':index')).map(match => match.id.includes(':') ? { id: match.params[match.id.split(/\:/g)[1]], path: match.pathname } : { id: match.id, path: match.pathname })
+    console.log(
+      matches,location
+    );
   }, [matches])
 
-  const crumbs = matches
-    // first get rid of any matches that don't have handle and crumb
-    .filter((match) => Boolean(match.handle?.crumb))
-    // now map them into an array of elements, passing the loader
-    // data to each one
-    .map((match) => match.handle.crumb(match.data));
+  const crumbs = matches.filter(match => !match.id.includes(':index')).map(match => match.id.includes(':') ? { id: match.params[match.id.split(/\:/g)[1]], path: match.pathname } : { id: match.id, path: match.pathname })
   return (
-    <div className="breadcrumbs custom-container text-sm bg-white">
-      <ul>
-        <li className=''>
-          <a>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="h-4 w-4 mr-2 stroke-current">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-            </svg>
-            dfgdfg
-            {/* {JSON.stringify(matches)} */}
-          </a>
-        </li>
-        <li>
-          <a>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="h-4 w-4 stroke-current">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
-            </svg>
-            {/* {JSON.stringify(matches)} */}
-          </a>
-        </li>
-      </ul>
+    <div className="flex flex-col justify-center py-4 gap-4 custom-container text-white">
+      <div className="breadcrumbs font-medium text-md">
+        <ul>
+          {
+            crumbs.map((crumb, index) => (
+              <li key={index} className=''>
+                <a onClick={() => navigator(crumb.path)} className=''>
+                  {
+                    index === 0 && (
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-4 w-4 mr-2">
+                        <path fill='#ffffff' d="M64 270.5c74.7-65.3 149.3-130.6 224-196L512.1 270.6l.4 201.3c0 22.1-17.9 40.1-40 40.1L392 512c-22.1 0-40-17.9-40-40l0-88.3c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 88.3c0 22.1-17.9 40-40 40l-79.9 0c-22.1 0-40-17.9-40-40L64 270.5z" />
+                        <path fill='#ffffff' d="M266.9 7.9C279-2.6 297-2.6 309.1 7.9l256 224c13.3 11.6 14.6 31.9 3 45.2s-31.9 14.6-45.2 3L288 74.5 53.1 280.1c-13.3 11.6-33.5 10.3-45.2-3s-10.3-33.5 3-45.2l256-224z" />
+                      </svg>
+                    )
+                  }
+                  {crumb.id}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <p className='text-3xl font-medium'>{crumbs[crumbs.length - 1].id}</p>
     </div>
-    // <div>{JSON.stringify(matches)}</div>
-    // <ol>
-    //   {crumbs.map((crumb, index) => (
-    //     <li key={index}>{crumb}</li>
-    //   ))}
-    // </ol>
   )
 }

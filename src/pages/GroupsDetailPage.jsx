@@ -4,6 +4,7 @@ import groups from "../utils/groups";
 import { useParams } from "react-router-dom";
 import Table from "../components/Table";
 import SearchInput from "../components/SearchInput";
+import CardData from "../components/CardData";
 
 export default function GroupsDetailPage() {
   const { id } = useParams();
@@ -12,7 +13,7 @@ export default function GroupsDetailPage() {
 
   useEffect(() => {
     // console.log(
-    //   groups.filter(group => group.id === groupId)[0]
+    //   groups.filter(group => group.id === id)[0]
     // );
     setGroupDetail(groups.filter(group => group.id === id)[0])
   }, [])
@@ -21,13 +22,18 @@ export default function GroupsDetailPage() {
     switch (tabIndex) {
       case 0:
         return <>
-        <div className="flex flex-col gap-2">
-          <SearchInput />
-          <div className="flex justify-between">
-            <p className="text-lg font-normal">found 4 datasets</p>
+          <div className="flex flex-col gap-2">
+            <SearchInput />
+            <div className="flex justify-between">
+              <p className="text-lg font-normal">found 4 datasets</p>
+            </div>
+            <div className="flex flex-col gap-4">
+              <CardData />
+              <CardData />
+              <CardData />
+              <CardData />
+            </div>
           </div>
-          <div>adss</div>
-        </div>
         </>
       case 1:
         return <>

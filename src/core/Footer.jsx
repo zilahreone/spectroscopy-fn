@@ -43,7 +43,7 @@ export default function Footer() {
         </div>
         <div></div>
       </div>
-      <div className='footer-gradient p-2'>
+      <div className='p-2 bg-gradient-to-r from-charcoal to-burnt_sienna'>
         <p className='cursor-default text-center text-sm text-white font-normal'>Copyright © {new Date().getFullYear()} All right reserved. THz - Powered By NECTEC.</p>
       </div>
       {/* <nav>

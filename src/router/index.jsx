@@ -18,6 +18,7 @@ import background from "../assets/scott-graham.jpg"
 import GroupsPage from "../pages/GroupsPage";
 import GroupsDetailPage from "../pages/GroupsDetailPage";
 import Breadcrumbs from "../components/Breadcrumbs";
+import GroupsDataDetailPage from "../pages/GroupsDataDetailPage";
 
 const parent = (children) => {
   return <>
@@ -38,7 +39,7 @@ const parent = (children) => {
 //     <Footer />
 //   </footer>
 // }
-const template = (children, isNav = true, isFoot = true) => {
+const template = (children, isHome = false, isNav = true, isFoot = true) => {
   return <div className="flex flex-col min-h-screen"
     style={{
       backgroundImage: `url(${background})`,
@@ -50,18 +51,24 @@ const template = (children, isNav = true, isFoot = true) => {
       isNav &&
       <header className="z-50">
         <Navbar />
-        <Breadcrumbs />
+        {
+          !isHome && (
+            <div className="bg-[#3e228a] bg-opacity-50">
+              <Breadcrumbs />
+            </div>
+          )
+        }
       </header>
     }
     <div className={`grow`}>
       {children}
     </div>
-    {
+    {/* {
       isFoot &&
       <footer>
         <Footer />
       </footer>
-    }
+    } */}
   </div>
 
 }
@@ -105,87 +112,97 @@ const router = createBrowserRouter([
     path: '/',
     id: 'Home',
     errorElement: <ErrorPage />,
-    element: template(<HomePage />),
-    // children: [
-    //   {
-    //     id: ':home',
-    //     index: true,
-
-    //   },
-    //   {
-    //     path: 'measurements',
-    //     id: 'Measurements',
-    //     children: [
-    //       {
-    //         id: ':measurements',
-    //         index: true,
-    //         element: template(parent(<MeasurementsPage />)),
-    //       },
-    //       {
-    //         path: ':measurementId',
-    //         id: ':measurementId',
-    //         element: template(parent(<MeasurementsDetailPage />)),
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     path: 'analysis',
-    //     id: 'Analysis',
-    //     element: <AnalysisPage>
-    //       <header className="sticky top-0 z-50">
-    //         <Navbar />
-    //       </header>
-    //     </AnalysisPage>
-    //   },
-    //   {
-    //     path: 'spectra',
-    //     id: 'Spectra',
-    //     element: template(parent(<SpectraPage />))
-    //   },
-    //   {
-    //     path: 'list',
-    //     id: 'List',
-    //     element: template(parent(<ExperimentListPage />))
-    //   },
-    //   // {
-    //   //   path: 'groups',
-    //   //   id: 'Groups',
-    //   //   children: [
-    //   //     {
-    //   //       id: ':groups',
-    //   //       index: true,
-    //   //       element: template(<div className="custom-container py-6 bg-white"><GroupsPage /></div>)
-    //   //     },
-    //   //     {
-    //   //       path: ':groupId',
-    //   //       id: ':groupId',
-    //   //       element: template(<div className="custom-container py-6 bg-white"><GroupsDetailPage /></div>),
-    //   //     }
-    //   //   ]
-    //   // },
-    //   {
-    //     path: 'about',
-    //     id: 'About',
-    //     element: template(<AboutPage />)
-    //   },
-    // ]
-  },
-  {
-    path: 'groups',
-    id: 'Groups',
     children: [
       {
-        id: ':Groups_Index',
+        id: 'Home:index',
         index: true,
-        element: template(<div className="custom-container py-6 bg-white"><GroupsPage /></div>),
+        element: template(<HomePage />, true),
       },
       {
-        path: ':id',
-        id: ':groupId',
-        element: template(<div className="custom-container py-6 bg-white"><GroupsDetailPage /></div>),
-      }
+        path: 'measurements',
+        id: 'Measurements',
+        children: [
+          {
+            id: ':measurements',
+            index: true,
+            element: template(parent(<MeasurementsPage />)),
+          },
+          {
+            path: ':measurementId',
+            id: ':measurementId',
+            element: template(parent(<MeasurementsDetailPage />)),
+          }
+        ]
+      },
+      {
+        path: 'analysis',
+        id: 'Analysis',
+        element: <AnalysisPage>
+          <header className="sticky top-0 z-50">
+            <Navbar />
+          </header>
+        </AnalysisPage>
+      },
+      {
+        path: 'spectra',
+        id: 'Spectra',
+        element: template(parent(<SpectraPage />))
+      },
+      {
+        path: 'list',
+        id: 'List',
+        element: template(parent(<ExperimentListPage />))
+      },
+      {
+        path: 'groups',
+        id: 'Groups',
+        children: [
+          {
+            id: 'Groups:index',
+            index: true,
+            element: template(<div className="custom-container py-6 bg-white"><GroupsPage /></div>)
+          },
+          {
+            path: ':id',
+            id: 'Groups:id',
+            children: [
+              {
+                id: 'Groups:id:index',
+                index: true,
+                element: template(<div className="custom-container py-6 bg-white"><GroupsDetailPage /></div>),
+              },
+              {
+                path: ':idId',
+                id: 'Groups:idId',
+                element: template(<div className="custom-container py-6 bg-white"><GroupsDataDetailPage /></div>),
+              }
+            ],
+          }
+        ]
+      },
+      {
+        path: 'about',
+        id: 'About',
+        element: template(<AboutPage />)
+      },
     ]
   },
+  // {
+  //   path: 'groups',
+  //   id: 'Groups',
+  //   children: [
+  //     {
+  //       id: ':Groups_Index',
+  //       index: true,
+  //       element: template(<div className="custom-container py-6 bg-white"><GroupsPage /></div>),
+  //     },
+  //     {
+  //       path: ':id',
+  //       id: ':groupId',
+  //       element: template(<div className="custom-container py-6 bg-white"><GroupsDetailPage /></div>),
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/login',
   //   element: <LoginGuard />
