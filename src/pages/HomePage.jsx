@@ -4,6 +4,7 @@ import Button from '../components/actions/Button'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import keycloak from '../service/keycloak'
 import SearchInput from '../components/SearchInput'
+import groups from "../utils/groups"
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -17,10 +18,9 @@ export default function HomePage() {
       <div className='flex flex-col gap-y-8 bg-[#3e1f47] bg-opacity-50 pt-[50px] pb-[25px] custom-container'>
         <div className='grow text-white'>
           <p className='text-2xl font-semibold'>
-            ฐานข้อมูลเปิดภาครัฐเพื่อสนับสนุนการติดตาม<br />
-            และประเมินผลการดำเนินงานตามยุทธศาสตร์ชาติ
+            Spectroscopy signal analysis technologies and platforms
           </p>
-          <p className='font-medium'>(Open Data Portal for Monitoring and Evaluating Government Projects under National Strategy)</p>
+          <p className='font-medium'>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </div>
         <div className='grow min-w-[200px] flex flex-col md:flex-row justify-between'>
           <div className='md:w-96'>
@@ -60,10 +60,26 @@ export default function HomePage() {
         </div>
       </div>
       <div className='custom-container bg-[#0b525b] bg-opacity-75 text-white py-12'>
-        <p className='font-normal text-2xl'>ฐานข้อมูลเปิดภาครัฐเพื่อสนับสนุนการติดตามและประเมินผลการดำเนินงานตามยุทธศาสตร์ชาติ
-          (Open Data Portal for Monitoring and Evaluating Government Projects under National Strategy)</p>
+        <p className='font-normal text-2xl'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
         <br />
-        <p className='text-lg'>สำนักงานสภาพัฒนาการเศรษฐกิจและสังคมแห่งชาติ หรือ สศช. พัฒนาฐานข้อมูลนี้ขึ้น เพื่อเป็นศูนย์กลางแหล่งข้อมูลเปิดภาครัฐ เชื่อมโยงชุดข้อมูลสารสนเทศระหว่างหน่วยงานภาครัฐ อาทิ ข้อมูลสถิติ สถานการณ์ หรือข้อมูลอื่นจาก eMENSCR ที่สอดคล้องกับยุทธศาสตร์ชาติ แผนแม่บทภายใต้ยุทธศาสตร์ชาติ เพื่ออำนวยความสะดวกให้กับผู้ใช้บริการทั้งภาคประชาชน ภาคธุรกิจเอกชน รวมถึงหน่วยงานของรัฐ สามารถใช้ประโยชน์จากข้อมูลเปิดภาครัฐ ในการค้นหาและเข้าถึงข้อมูลที่มีคุณภาพ ทันสมัย มั่นคงและมีความปลอดภัย รวมทั้งเป็นช่องทางในการตรวจสอบการดำเนินการของภาครัฐ และการดำเนินงานภายใต้ยุทธศาสตร์ชาติได้ โดยข้อมูลที่เผยแพร่จะอยู่ในรูปแบบไฟล์ที่สามารถแสดงตัวอย่างข้อมูล (Preview) การแสดงผลข้อมูลเชิงภาพและในรูปแบบกราฟต่าง ๆ (Data Visualization) และชุดข้อมูลที่เผยแพร่จะถูกแปลงเป็นเอพีไอ (Application Programming Interface: API) แบบอัตโนมัติ</p>
+        <p className='text-md'>
+          Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+        </p>
+      </div>
+      <div className='flex flex-col gap-8 bg-persian_green-200 bg-opacity-75 custom-container text-white py-12'>
+        <p className='text-2xl font-medium'>Master plan under the national strategy</p>
+        <div className='flex flex-wrap gap-4'>
+          {
+            groups.map((group, index) => (
+              <div key={index} className='min-w-[150px] basis-1/6'>
+                <div className='flex flex-col border rounded-t-2xl'>
+                  <img className='p-4' src={group.src} alt="" />
+                </div>
+                <p className='p-4 w-full text-center font-medium border-b border-x rounded-b-2xl'>{group.title}</p>
+              </div>
+            ))
+          }
+        </div>
       </div>
       {/* <Outlet /> */}
     </div>

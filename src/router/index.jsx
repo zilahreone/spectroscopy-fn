@@ -63,12 +63,12 @@ const template = (children, isHome = false, isNav = true, isFoot = true) => {
     <div className={`grow`}>
       {children}
     </div>
-    {/* {
+    {
       isFoot &&
       <footer>
         <Footer />
       </footer>
-    } */}
+    }
   </div>
 
 }

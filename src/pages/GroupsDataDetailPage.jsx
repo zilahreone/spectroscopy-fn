@@ -1,5 +1,4 @@
 import { useState } from "react"
-import groups from "../utils/groups"
 import { useLocation, useNavigation, useParams } from "react-router-dom"
 
 export default function GroupsDataDetailPage() {
@@ -9,13 +8,39 @@ export default function GroupsDataDetailPage() {
   const handleDownload = () => {
     console.log('asdadasd');
   }
-  const menus = [
-    {
-      name: 'Dataset',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="w-8 h-8">
-        <path d="M384 480l48 0c11.4 0 21.9-6 27.6-15.9l112-192c5.8-9.9 5.8-22.1 .1-32.1S555.5 224 544 224l-400 0c-11.4 0-21.9 6-27.6 15.9L48 357.1 48 96c0-8.8 7.2-16 16-16l117.5 0c4.2 0 8.3 1.7 11.3 4.7l26.5 26.5c21 21 49.5 32.8 79.2 32.8L416 144c8.8 0 16 7.2 16 16l0 32 48 0 0-32c0-35.3-28.7-64-64-64L298.5 96c-17 0-33.3-6.7-45.3-18.7L226.7 50.7c-12-12-28.3-18.7-45.3-18.7L64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l23.7 0L384 480z" />
-      </svg>,
-      content: <div>
+  return (
+    <div>
+      {/* <div className="flex flex-wrap items-center justify-center gap-x-2">
+        {
+          menus.map((menu, index) => (
+            <div key={index} onClick={() => setMenuIndex(index)} className={`flex flex-col items-center gap-1 border p-8 rounded-3xl cursor-pointer hover:bg-red-200 ${index === menuIndex && 'bg-persian_green-500'}`}>
+              {menu.icon}
+              <p className="font-normal">{menu.name}</p>
+            </div>
+          ))
+        }
+      </div> */}
+      <div className="flex flex-col gap-8 mt-4">
+        <p className="font-medium text-lg">
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        </p>
+        <p className="text-sm">
+          Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+        </p>
+        <div className="flex flex-col gap-y-2 text-sm font-medium">
+          <div className="flex">
+            <p className="min-w-[100px] w-[200px]">Organization: </p>
+            <p>NECTEC</p>
+          </div>
+          <div className="flex">
+            <p className="min-w-[100px] w-[200px]">Modified: </p>
+            <p className="w-fit flex-none">20 JAN 2024</p>
+          </div>
+        </div>
+      </div>
+      <div className="divider"></div>
+      <p className="font-medium text-lg">Dataset</p>
+      <div className="py-4">
         <p className="font-medium">Metadata and Resource</p>
         <div>
           <div className="flex items-center gap-x-2">
@@ -89,36 +114,36 @@ export default function GroupsDataDetailPage() {
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Group</td>
-                <td className="pl-8"><div className="badge badge-primary">pure-samples</div></td>
+                <td className="pl-8"><div className="badge badge-primary cursor-pointer">pure-samples</div></td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Keyworld</td>
                 <td className="pl-8">
                   <div className="flex gap-x-1 items-center">
-                    <div className="badge badge-primary">pure-samples</div>
-                    <div className="badge badge-primary">pure-samples</div>
-                    <div className="badge badge-primary">pure-samples</div>
+                    <div className="badge badge-primary cursor-pointer">pure-samples</div>
+                    <div className="badge badge-primary cursor-pointer">pure-samples</div>
+                    <div className="badge badge-primary cursor-pointer">pure-samples</div>
                   </div>
                 </td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Target</td>
-                <td className="pl-8"><div className="badge badge-primary">XXXXX</div></td>
+                <td className="pl-8"><div className="badge badge-primary cursor-pointer">XXXXX</div></td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Component</td>
-                <td className="pl-8"><div className="badge badge-primary">XXXXX</div></td>
+                <td className="pl-8"><div className="badge badge-primary cursor-pointer">XXXXX</div></td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Issue-level objectives of the master plan under the national strategy</td>
-                <td className="pl-8"><div className="badge badge-primary">XXXXX</div></td>
+                <td className="pl-8"><div className="badge badge-primary cursor-pointer">XXXXX</div></td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Sustainable Development Goals</td>
                 <td className="pl-8">
                   <div className="flex gap-x-1 items-center">
-                    <div className="badge badge-primary">XXXXX</div>
-                    <div className="badge badge-primary">XXXXX</div>
+                    <div className="badge badge-primary cursor-pointer">XXXXX</div>
+                    <div className="badge badge-primary cursor-pointer">XXXXX</div>
                   </div>
                 </td>
               </tr>
@@ -164,66 +189,6 @@ export default function GroupsDataDetailPage() {
           </table>
         </div>
       </div>
-    },
-    {
-      name: 'Groups',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" className="w-8 h-8">
-        <path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3zM609.3 512l-137.8 0c5.4-9.4 8.6-20.3 8.6-32l0-8c0-60.7-27.1-115.2-69.8-151.8c2.4-.1 4.7-.2 7.1-.2l61.4 0C567.8 320 640 392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 0 112 50.1 112 112s-50.1 112-112 112z" />
-      </svg>,
-      content: <div className="flex gap-4">
-        {
-          groups.filter(gf => gf.id === 'pure-samples').map((group, index) => (
-            <div key={`g_${index}`} className="flex flex-col border shadow-xl rounded-lg items-center w-44 min-w-[100px] cursor-pointer button-hover-animation">
-              <div className="bg-saffron-800 w-full flex justify-center rounded-t-lg">
-                <img src={`../../${group.src}`} className="w-20 m-4" />
-              </div>
-              <div className="text-center font-normal py-4">{group.title}</div>
-            </div>
-          ))
-        }
-      </div>
-    },
-    {
-      name: 'Comment',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-8 h-8">
-        <path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 0 0 0 0s0 0 0 0s0 0 0 0c0 0 0 0 0 0l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z" />
-      </svg>,
-      content: <div className="text-center">Comment is not Available !!!</div>
-    },
-  ]
-  return (
-    <div>
-      <div className="flex flex-wrap items-center justify-center gap-x-2">
-        {
-          menus.map((menu, index) => (
-            <div key={index} onClick={() => setMenuIndex(index)} className={`flex flex-col items-center gap-1 border p-8 rounded-3xl cursor-pointer hover:bg-red-200 ${index === menuIndex && 'bg-persian_green-500'}`}>
-              {menu.icon}
-              <p className="font-normal">{menu.name}</p>
-            </div>
-          ))
-        }
-      </div>
-      <div className="flex flex-col gap-8 bg-slate-100 mt-4">
-        <p className="font-medium text-lg">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-        </p>
-        <p className="text-sm">
-          Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
-        </p>
-        <div className="flex flex-col gap-y-2 text-sm font-medium">
-          <div className="flex">
-            <p className="min-w-[100px] w-[200px]">Organization: </p>
-            <p>NECTEC</p>
-          </div>
-          <div className="flex">
-            <p className="min-w-[100px] w-[200px]">Modified: </p>
-            <p className="w-fit flex-none">20 JAN 2024</p>
-          </div>
-        </div>
-      </div>
-      <div className="divider"></div>
-      <p className="font-medium text-lg">{menus[menuIndex].name}</p>
-      <div className="py-4">{menus[menuIndex].content}</div>
     </div>
   )
 }
