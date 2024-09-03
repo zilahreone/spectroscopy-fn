@@ -65,7 +65,7 @@ export default function FileInputForm({ className, id, multiple, accept, name, l
   return (
     <div className={className}>
       <div className="form-control">
-        <div className="label">
+        <div className="label font-medium">
           <span className="label-text">{tlLabel}</span>
           <span className="label-text-alt">{trLabel}</span>
         </div>
@@ -93,7 +93,7 @@ export default function FileInputForm({ className, id, multiple, accept, name, l
         {/* <input type="file" className="file-input file-input-bordered file-input-primary file-input-sm w-full" placeholder={placeholder} required={required} /> */}
         <input onChange={handleUpload} type="file" name={name} id={id} multiple={multiple} accept={accept} hidden />
         <label htmlFor={id} className='btn btn-primary btn-sm'>{label || 'Choose file to upload'}</label>
-        <div className="label">
+        <div className="label font-medium">
           <span className="label-text-alt">{blLabel}</span>
           <span className="label-text-alt">{brLabel}</span>
         </div>

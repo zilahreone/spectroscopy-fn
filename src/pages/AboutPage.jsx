@@ -3,11 +3,11 @@ import React from 'react'
 export default function AboutPage() {
   return (
     <>
-      <div className="flex gap-x-4">
+      <div className="flex gap-x-16">
         <div>
           <img src='https://www.nectec.or.th/sectionImage/10439' className="object-contain" />
         </div>
-        <div>
+        <div className='font-normal text-md'>
           ทีมวิจัยเทคโนโลยีเทระเฮิรตซ์ (TRT)<br />
           กลุ่มวิจัยอุปกรณ์สเปกโทรสโกปีและเซนเซอร์ (SSDRG)<br />
           ศูนย์เทคโนโลยีอิเล็กทรอนิกส์และคอมพิวเตอร์แห่งชาติ (เนคเทค)<br />

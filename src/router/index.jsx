@@ -125,12 +125,13 @@ const router = createBrowserRouter([
           {
             id: ':measurements',
             index: true,
-            element: template(parent(<MeasurementsPage />)),
+            element: template(<div className="bg-white custom-container py-6"><MeasurementsPage /></div>
+            ),
           },
           {
             path: ':measurementId',
             id: ':measurementId',
-            element: template(parent(<MeasurementsDetailPage />)),
+            element: template(<div className="bg-white custom-container py-6"><MeasurementsDetailPage /></div>),
           }
         ]
       },
@@ -183,7 +184,7 @@ const router = createBrowserRouter([
       {
         path: 'about',
         id: 'About',
-        element: template(<AboutPage />)
+        element: template(<div className="bg-white custom-container py-6"><AboutPage /></div>)
       },
     ]
   },

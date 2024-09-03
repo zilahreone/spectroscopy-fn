@@ -105,129 +105,106 @@ export default function MeasurementsPage() {
   }
   return (
     <>
-      <div className='flex lg:flex-col flex-row'>
-        <div className='mt-0 mb-4'>
-          <ul className="steps steps-vertical lg:steps-horizontal w-full">
-            {
-              steps.map((step, index) => (
-                <li key={index} className={`step ${index <= stepIndex && 'step-primary'}`} >
-                  <div className='hidden lg:flex font-normal'>{step}</div>
-                </li>
-              ))
-            }
-          </ul>
+      <div className='flex flex-col'>
+        <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
+          <InputForm
+            className={'flex-1'}
+            tlLabel={'Experiment name'}
+            required
+            value={measurements.experiment_name}
+            onEmit={(val) => handleSetMeasurements('experiment_name', val)}
+          />
+          <InputForm
+            className={'flex-1'}
+            tlLabel={'Chemical name'}
+            required
+            value={measurements.chemical_name}
+            onEmit={(val) => handleSetMeasurements('chemical_name', val)}
+          />
         </div>
-        <div className='min-h-[380px]'>
-          {/* <pre>
-            {JSON.stringify(measurements, null, 2)}
-          </pre> */}
-          {/* <pre>
-            {JSON.stringify(keycloak.tokenParsed, null, 2)}
-          </pre> */}
-          {
-            stepIndex === 0 && (
-              <div className='flex flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
-                <div className='basis-1/2'>
-                  <InputForm tlLabel={'Experiment name'}
-                    required
-                    value={measurements.experiment_name}
-                    onEmit={(val) => handleSetMeasurements('experiment_name', val)}
-                  />
-                  <InputForm tlLabel={'Date of collection'}
-                    required
-                    type={'date'}
-                    value={measurements.date_collection && measurements.date_collection.substring(0, 10)}
-                    onEmit={(val) => handleSetMeasurements('date_collection', new Date(val).toISOString())}
-                  />
-                  <InputForm tlLabel={'Organization'} onEmit={(val) => handleSetMeasurements('organization', val)} value={measurements.organization} required />
-                  <InputForm tlLabel={'Collected by'} onEmit={(val) => handleSetMeasurements('collected_by', val)} value={measurements.collected_by} required />
-                </div>
-                <div className='basis-1/2'>
-                  <InputForm tlLabel={'Chemical name'}
-                    required
-                    value={measurements.chemical_name}
-                    onEmit={(val) => handleSetMeasurements('chemical_name', val)}
-                  />
-                  <Label name={'Measurement technique'} />
-                  <RadioButton onEmit={(val) => handleSetMeasurements('measurement_technique', val)} name={'measurement_techn'} checked={measurements.measurement_technique} label={'FTIR (Fourier-Transformed Infrared Spectroscopy)'} value={'ftir'} />
-                  <RadioButton onEmit={(val) => handleSetMeasurements('measurement_technique', val)} name={'measurement_techn'} checked={measurements.measurement_technique} label={'TDS (Time-Domain Spectroscopy)'} value={'tds'} />
-                  <RadioButton onEmit={(val) => handleSetMeasurements('measurement_technique', val)} name={'measurement_techn'} checked={measurements.measurement_technique} label={'Raman Spectroscopy'} value={'raman'} />
-                </div>
-              </div>
-            )
-          }
-          {
-            stepIndex === 1 && (
-              <div className='flex flex-row'>
-                <div className='md:basis-4/5 lg:basis-1/2 basis-full'>
-                  <InputForm tlLabel={'Instrument'}
-                    required
-                    value={measurements.instrument}
-                    onEmit={(val) => handleSetMeasurements('instrument', val)}
-                  />
-                  <SelectForm
-                    required
-                    tlLabel={'Type'}
-                    selected={measurements.type}
-                    options={[{ name: 'a', value: 'ant' }, { name: 'b', value: 'bat' }]}
-                    onEmit={(val) => handleSetMeasurements('type', val)}
-                  />
-                  <SelectForm
-                    required
-                    tlLabel={'Normalization'}
-                    selected={measurements.normalization}
-                    options={[{ name: 'a', value: 'ant' }, { name: 'b', value: 'bat' }]}
-                    onEmit={(val) => handleSetMeasurements('normalization', val)}
-                  />
-                  <FileInputForm
-                    accept={'application/pdf, text/plain, .doc ,.docx, image/*'}
-                    fileList={uploadDetail}
-                    onEmit={(files) => handleUploadDetail('others_attachments', files)}
-                    id={'other'}
-                    label={'Upload details as attachment'}
-                    multiple
-                    tlLabel={'Other details'}
-                  />
-                </div>
-              </div>
-            )
-          }
-          {
-            stepIndex === 2 && (
-              <div className='flex'>
-                {/* <label className='font-normal'>Upload spectra</label> */}
-                {/* <FileUpload multiple id={'upload_spectra'}
+        <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
+          <div className='flex-1'>
+            <InputForm tlLabel={'Instrument'}
+              required
+              value={measurements.instrument}
+              onEmit={(val) => handleSetMeasurements('instrument', val)}
+            />
+            <InputForm
+              tlLabel={'Organization'}
+              value={measurements.organization} required
+              onEmit={(val) => handleSetMeasurements('organization', val)}
+            />
+          </div>
+          <div className='flex-1'>
+            <Label name={'Measurement technique'} />
+            <RadioButton onEmit={(val) => handleSetMeasurements('measurement_technique', val)} name={'measurement_techn'} checked={measurements.measurement_technique} label={'FTIR (Fourier-Transformed Infrared Spectroscopy)'} value={'ftir'} />
+            <RadioButton onEmit={(val) => handleSetMeasurements('measurement_technique', val)} name={'measurement_techn'} checked={measurements.measurement_technique} label={'TDS (Time-Domain Spectroscopy)'} value={'tds'} />
+            <RadioButton onEmit={(val) => handleSetMeasurements('measurement_technique', val)} name={'measurement_techn'} checked={measurements.measurement_technique} label={'Raman Spectroscopy'} value={'raman'} />
+          </div>
+        </div>
+        <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
+          <InputForm
+            className={'flex-1'}
+            tlLabel={'Date of collection'}
+            required
+            type={'date'}
+            value={measurements.date_collection && measurements.date_collection.substring(0, 10)}
+            onEmit={(val) => handleSetMeasurements('date_collection', new Date(val).toISOString())}
+          />
+          <InputForm
+            className={'flex-1'}
+            tlLabel={'Collected by'}
+            value={measurements.collected_by} required
+            onEmit={(val) => handleSetMeasurements('collected_by', val)}
+          />
+        </div>
+        <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
+          <SelectForm
+            className={'flex-1'}
+            required
+            tlLabel={'Type'}
+            selected={measurements.type}
+            options={[{ name: 'a', value: 'ant' }, { name: 'b', value: 'bat' }]}
+            onEmit={(val) => handleSetMeasurements('type', val)}
+          />
+          <SelectForm
+            className={'flex-1'}
+            required
+            tlLabel={'Normalization'}
+            selected={measurements.normalization}
+            options={[{ name: 'a', value: 'ant' }, { name: 'b', value: 'bat' }]}
+            onEmit={(val) => handleSetMeasurements('normalization', val)}
+          />
+        </div>
+        <FileInputForm
+          className='min-w-[250px] w-1/3'
+          accept={'application/pdf, text/plain, .doc ,.docx, image/*'}
+          fileList={uploadDetail}
+          onEmit={(files) => handleUploadDetail('others_attachments', files)}
+          id={'other'}
+          label={'Upload details as attachment'}
+          multiple
+          tlLabel={'Other details'}
+        />
+        <FileInputForm
+          className='min-w-[250px] w-1/3'
+          accept={''}
+          fileList={uploadSpectra}
+          onEmit={(files) => handleUploadDetail('files', files)}
+          id={'upload_spectra'}
+          label={'Upload details as attachment'}
+          multiple
+          tlLabel={'Other Spectra'}
+        />
+      </div>
+      <div className='flex'>
+        {/* <label className='font-normal'>Upload spectra</label> */}
+        {/* <FileUpload multiple id={'upload_spectra'}
                   fileList={uploadSpectra}
                   onEmit={(files) => handleUploadDetail('files', files)}
                 /> */}
-                <FileInputForm
-                  className='basis-full'
-                  accept={''}
-                  fileList={uploadSpectra}
-                  onEmit={(files) => handleUploadDetail('files', files)}
-                  id={'upload_spectra'}
-                  label={'Upload details as attachment'}
-                  multiple
-                  tlLabel={'Other Spectra'}
-                />
-              </div>
-            )
-          }
-        </div>
       </div>
-      <div className='flex justify-between'>
-        <button className="btn btn-circle" onClick={() => stepIndex > 0 && setStepIndex(stepIndex - 1)} disabled={stepIndex === 0}>
-          <svg className="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m15 19-7-7 7-7" />
-          </svg>
-        </button>
-        <button className="btn btn-circle" onClick={() => steps.length - 1 > stepIndex && setStepIndex(stepIndex + 1)} disabled={steps.length - 1 === stepIndex}>
-          <svg className="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-      <div className='mt-4 flex justify-center'>
+      <div className='mt-4 flex justify-end'>
         <Button type={'submit'} onEmit={() => handleCreateExperiment()} color={'primary'} name={'Create Experiment'} />
       </div>
       {/* You can open the modal using document.getElementById('ID').showModal() method */}

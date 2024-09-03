@@ -1,10 +1,10 @@
 import React from 'react'
 
-export default function SelectForm({ required, blLabel, brLabel, tlLabel, trLabel, selected, options, onEmit }) {
+export default function SelectForm({className, required, blLabel, brLabel, tlLabel, trLabel, selected, options, onEmit }) {
   return (
-    <div>
+    <div className={className}>
       <label className="form-control w-full">
-        <div className="label">
+        <div className="label font-medium">
           <span className="label-text">{tlLabel}</span>
           <span className="label-text-alt">{trLabel}</span>
         </div>
@@ -17,7 +17,7 @@ export default function SelectForm({ required, blLabel, brLabel, tlLabel, trLabe
           }
         </select>
 
-        <div className="label">
+        <div className="label font-medium">
           <span className="label-text-alt">{blLabel}</span>
           <span className="label-text-alt">{brLabel}</span>
         </div>

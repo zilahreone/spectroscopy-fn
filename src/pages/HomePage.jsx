@@ -68,14 +68,18 @@ export default function HomePage() {
       </div>
       <div className='flex flex-col gap-8 bg-persian_green-200 bg-opacity-75 custom-container text-white py-12'>
         <p className='text-2xl font-medium'>Master plan under the national strategy</p>
-        <div className='flex flex-wrap gap-4'>
+        <div className='flex flex-wrap -mx-2 -my-3'>
           {
             groups.map((group, index) => (
-              <div key={index} className='min-w-[150px] basis-1/6'>
+              <div onClick={() => navigate(`/groups/${group.id}`)} key={index} className='px-2 py-3 min-w-[180px] basis-1/5 cursor-pointer'>
+                <div className='hover:bg-slate-300 hover:scale-110 hover:-translate-y-1 transition duration-200 rounded-2xl ease-in-out transform hover:rounded-2xl hover:text-persian_green-200'>
                 <div className='flex flex-col border rounded-t-2xl'>
                   <img className='p-4' src={group.src} alt="" />
                 </div>
                 <p className='p-4 w-full text-center font-medium border-b border-x rounded-b-2xl'>{group.title}</p>
+
+                </div>
+                {/* <div key={index} className='min-w-[150px] basis-1/6 hover:rounded-2xl button-hover-animation cursor-pointer hover:bg-slate-300 hover:text-persian_green-200'> */}
               </div>
             ))
           }
