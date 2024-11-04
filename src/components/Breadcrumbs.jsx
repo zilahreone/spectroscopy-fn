@@ -7,13 +7,31 @@ export default function Breadcrumbs() {
   let location = useLocation()
 
   useEffect(() => {
+    // console.log(
+    //   location
+    // );
     // const crumbs = matches.filter(match => !match.id.includes(':index')).map(match => match.id.includes(':') ? { id: match.params[match.id.split(/\:/g)[1]], path: match.pathname } : { id: match.id, path: match.pathname })
-    console.log(
-      matches,location
-    );
-  }, [matches])
+    // console.log(
+    //   matches.filter(match => !match.id.includes(':index')).map(match => {
+    //     if (match.id.includes(':')) {
+    //       const id = match.id.split(':').pop()
+    //       return {...match, id: match.params[id].charAt(0).toUpperCase() + match.params[id].slice(1)}
+    //     } else {
+    //       return match
+    //     }
+    //   })
+    // );
+  }, [])
 
-  const crumbs = matches.filter(match => !match.id.includes(':index')).map(match => match.id.includes(':') ? { id: match.params[match.id.split(/\:/g)[1]], path: match.pathname } : { id: match.id, path: match.pathname })
+  const crumbs = matches.filter(match => !match.id.includes(':index')).map(match => {
+    if (match.id.includes(':')) {
+      const id = match.id.split(':').pop()
+      const param = id === 'create' ? id : match.params[id]
+      return { ...match, id: param.charAt(0).toUpperCase() + param.slice(1) }
+    } else {
+      return match
+    }
+  })
   return (
     <div className="flex flex-col justify-center py-4 gap-4 custom-container text-white">
       <div className="breadcrumbs font-medium text-md">
@@ -21,7 +39,7 @@ export default function Breadcrumbs() {
           {
             crumbs.map((crumb, index) => (
               <li key={index} className=''>
-                <a onClick={() => navigator(crumb.path)} className=''>
+                <a onClick={() => navigator(crumb.pathname)} className=''>
                   {
                     index === 0 && (
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="h-4 w-4 mr-2">

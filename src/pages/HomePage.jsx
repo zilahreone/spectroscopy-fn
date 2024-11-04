@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
 import Stat from '../components/Stat'
 import Button from '../components/actions/Button'
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { Link, Outlet, useLoaderData, useNavigate } from 'react-router-dom'
 import keycloak from '../service/keycloak'
 import SearchInput from '../components/SearchInput'
-import groups from "../utils/groups"
 
 export default function HomePage() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const categoryData = useLoaderData()
   // useEffect(() => {
   //   console.log(keycloak.token);
   // }, [])
@@ -20,7 +20,6 @@ export default function HomePage() {
           <p className='text-2xl font-semibold'>
             Spectroscopy signal analysis technologies and platforms
           </p>
-          <p className='font-medium'>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </div>
         <div className='grow min-w-[200px] flex flex-col md:flex-row justify-between'>
           <div className='md:w-96'>
@@ -60,24 +59,27 @@ export default function HomePage() {
         </div>
       </div>
       <div className='custom-container bg-[#0b525b] bg-opacity-75 text-white py-12'>
-        <p className='font-normal text-2xl'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-        <br />
-        <p className='text-md'>
-          Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
-        </p>
+        <div className='flex flex-col gap-8'>
+          <p className='font-normal text-2xl'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+          <p className='text-md'>
+            Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+          </p>
+        </div>
       </div>
       <div className='flex flex-col gap-8 bg-persian_green-200 bg-opacity-75 custom-container text-white py-12'>
-        <p className='text-2xl font-medium'>Master plan under the national strategy</p>
+        <div className='flex flex-col gap-4'>
+          <p className='text-2xl font-medium'>Dataset Categories</p>
+          <p className=''>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
+        </div>
         <div className='flex flex-wrap -mx-2 -my-3'>
           {
-            groups.map((group, index) => (
-              <div onClick={() => navigate(`/groups/${group.id}`)} key={index} className='px-2 py-3 min-w-[180px] basis-1/5 cursor-pointer'>
+            categoryData.map((group, index) => (
+              <div onClick={() => navigate(`/groups/${group.name}`)} key={index} className='px-2 py-3 min-w-[180px] basis-1/5 cursor-pointer'>
                 <div className='hover:bg-slate-300 hover:scale-110 hover:-translate-y-1 transition duration-200 rounded-2xl ease-in-out transform hover:rounded-2xl hover:text-persian_green-200'>
                 <div className='flex flex-col border rounded-t-2xl'>
                   <img className='p-4' src={group.src} alt="" />
                 </div>
                 <p className='p-4 w-full text-center font-medium border-b border-x rounded-b-2xl'>{group.title}</p>
-
                 </div>
                 {/* <div key={index} className='min-w-[150px] basis-1/6 hover:rounded-2xl button-hover-animation cursor-pointer hover:bg-slate-300 hover:text-persian_green-200'> */}
               </div>

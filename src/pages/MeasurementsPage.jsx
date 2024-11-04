@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InputForm from '../components/form/InputForm'
 import FileInputForm from '../components/form/FileInputForm'
 import SelectForm from '../components/form/SelectForm'
@@ -13,6 +13,9 @@ import { useNavigate } from 'react-router-dom'
 
 export default function MeasurementsPage() {
   const navigate = useNavigate()
+  const [chemicals, setChemical] = useState([])
+  const [organizations, setOrganizations] = useState([])
+  const [measurementTechnique, setMeasurementTechnique] = useState([])
   const [measurements, setMeasurements] = useState({
     collected_by: keycloak.tokenParsed.preferred_username,
     date_collection: new Date().toISOString(),
@@ -28,9 +31,40 @@ export default function MeasurementsPage() {
     }
   })
   const steps = ['General information', 'Measurement details', 'File upload']
+  const equipmentType = ['Portable', 'Benchtop', 'Handheld'].map(eqip => ({ name: eqip, value: eqip.toLowerCase() }))
   const [stepIndex, setStepIndex] = useState(0)
   const [uploadSpectra, setUploadSpectra] = useState([])
   const [uploadDetail, setUploadDetail] = useState([])
+
+  useEffect(() => {
+    const fetchMaterial = api.get(`/api/material`, keycloak.token)
+    const fetchOrganize = api.get(`/api/organization`, keycloak.token)
+    const fetchMeasurementTechnique = api.get(`/api/technique`, keycloak.token)
+    Promise.all([fetchMaterial, fetchOrganize, fetchMeasurementTechnique]).then((values) => {
+      values.forEach((value, index) => {
+        value.json().then(json => {
+          switch (index) {
+            case 0:
+              setChemical(json)
+              break;
+            case 1:
+              setOrganizations(json)
+              break;
+            case 2:
+              setMeasurementTechnique(json.map(j => ({ ...json, name: `${j.name.toUpperCase()} ${j.description && `- (${j.description})`}`, value: json.name })))
+              break;
+            default:
+              break;
+          }
+        })
+      })
+    })
+    return () => {
+      setChemical([])
+      setOrganizations([])
+    }
+  }, [])
+
 
   const handleSetMeasurements = (key, value) => {
     const nestedObject = (getObject, setObject) => {
@@ -107,31 +141,71 @@ export default function MeasurementsPage() {
     <>
       <div className='flex flex-col'>
         <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
-          <InputForm
+          <SelectForm
+            className={'flex-1'}
+            required
+            tlLabel={'Chemical name'}
+            selected={measurements.chemical_name}
+            options={chemicals}
+            onEmit={(val) => handleSetMeasurements('chemical_name', val)}
+          />
+          {/* <InputForm
             className={'flex-1'}
             tlLabel={'Experiment name'}
             required
             value={measurements.experiment_name}
             onEmit={(val) => handleSetMeasurements('experiment_name', val)}
-          />
-          <InputForm
+          /> */}
+          <InputForm tlLabel={'Instrument'}
             className={'flex-1'}
-            tlLabel={'Chemical name'}
             required
-            value={measurements.chemical_name}
-            onEmit={(val) => handleSetMeasurements('chemical_name', val)}
+            value={measurements.instrument}
+            onEmit={(val) => handleSetMeasurements('instrument', val)}
           />
         </div>
         <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
+          <SelectForm
+            className={'flex-1'}
+            required
+            tlLabel={'Equipment Type'}
+            selected={measurements.equipment_type}
+            options={equipmentType}
+            onEmit={(val) => handleSetMeasurements('equipment_type', val)}
+          />
+          <SelectForm
+            className={'flex-1'}
+            required
+            tlLabel={'Measurement technique'}
+            selected={measurements.measurement_technique}
+            options={measurementTechnique}
+            onEmit={(val) => handleSetMeasurements('measurement_technique', val)}
+          />
+        </div>
+        <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
+          <SelectForm
+            className={'flex-1'}
+            required
+            tlLabel={'Organization'}
+            selected={measurements.organization}
+            options={organizations}
+            onEmit={(val) => handleSetMeasurements('organization', val)}
+          />
+          <InputForm
+            className={'flex-1'}
+            tlLabel={'Date of collection'}
+            required
+            type={'date'}
+            value={measurements.date_collection && measurements.date_collection.substring(0, 10)}
+            onEmit={(val) => handleSetMeasurements('date_collection', new Date(val).toISOString())}
+          />
+        </div>
+        {/* <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
           <div className='flex-1'>
-            <InputForm tlLabel={'Instrument'}
+            <SelectForm
               required
-              value={measurements.instrument}
-              onEmit={(val) => handleSetMeasurements('instrument', val)}
-            />
-            <InputForm
               tlLabel={'Organization'}
-              value={measurements.organization} required
+              selected={measurements.organization}
+              options={organizations}
               onEmit={(val) => handleSetMeasurements('organization', val)}
             />
           </div>
@@ -141,40 +215,16 @@ export default function MeasurementsPage() {
             <RadioButton onEmit={(val) => handleSetMeasurements('measurement_technique', val)} name={'measurement_techn'} checked={measurements.measurement_technique} label={'TDS (Time-Domain Spectroscopy)'} value={'tds'} />
             <RadioButton onEmit={(val) => handleSetMeasurements('measurement_technique', val)} name={'measurement_techn'} checked={measurements.measurement_technique} label={'Raman Spectroscopy'} value={'raman'} />
           </div>
-        </div>
+        </div> */}
         <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
           <InputForm
-            className={'flex-1'}
-            tlLabel={'Date of collection'}
-            required
-            type={'date'}
-            value={measurements.date_collection && measurements.date_collection.substring(0, 10)}
-            onEmit={(val) => handleSetMeasurements('date_collection', new Date(val).toISOString())}
-          />
-          <InputForm
+            disabled
             className={'flex-1'}
             tlLabel={'Collected by'}
             value={measurements.collected_by} required
             onEmit={(val) => handleSetMeasurements('collected_by', val)}
           />
-        </div>
-        <div className='flex flex-1 flex-col sm:flex-row gap-x-2 md:gap-x-4 lg:gap-x-8'>
-          <SelectForm
-            className={'flex-1'}
-            required
-            tlLabel={'Type'}
-            selected={measurements.type}
-            options={[{ name: 'a', value: 'ant' }, { name: 'b', value: 'bat' }]}
-            onEmit={(val) => handleSetMeasurements('type', val)}
-          />
-          <SelectForm
-            className={'flex-1'}
-            required
-            tlLabel={'Normalization'}
-            selected={measurements.normalization}
-            options={[{ name: 'a', value: 'ant' }, { name: 'b', value: 'bat' }]}
-            onEmit={(val) => handleSetMeasurements('normalization', val)}
-          />
+          <div className={'flex-1'}></div>
         </div>
         <FileInputForm
           className='min-w-[250px] w-1/3'
@@ -184,7 +234,7 @@ export default function MeasurementsPage() {
           id={'other'}
           label={'Upload details as attachment'}
           multiple
-          tlLabel={'Other details'}
+          tlLabel={'Upload details'}
         />
         <FileInputForm
           className='min-w-[250px] w-1/3'
@@ -194,7 +244,7 @@ export default function MeasurementsPage() {
           id={'upload_spectra'}
           label={'Upload details as attachment'}
           multiple
-          tlLabel={'Other Spectra'}
+          tlLabel={'Upload Spectra'}
         />
       </div>
       <div className='flex'>

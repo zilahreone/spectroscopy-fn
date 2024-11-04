@@ -28,8 +28,8 @@ export default function Navbar() {
     //   path: '/spectra'
     // },
     {
-      name: 'List',
-      path: '/list'
+      name: 'Chemicals',
+      path: '/chemicals'
     },
     {
       name: 'Groups',
@@ -78,12 +78,10 @@ export default function Navbar() {
               </li>
               <hr className='my-1' />
               {
-                menus.map(menu => (
-                  <li>
-                    <Link key={menu.name} to={menu.path}>
-                      <a>
-                        {menu.name}
-                      </a>
+                menus.map((menu) => (
+                  <li key={menu.name}>
+                    <Link to={menu.path}>
+                      {menu.name}
                     </Link>
                   </li>
                 ))

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 // import App from './App.jsx'
 import './index.css'
@@ -25,6 +25,7 @@ const tokenLogger = (tokens) => {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
+
   <ReactKeycloakProvider
     authClient={keycloak}
     initOptions={{
@@ -36,16 +37,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     onTokens={tokenLogger}
   >
     {/* <>
-      <div>The user is {!keycloak.authenticated ? '' : 'NOT'} authenticated</div>
-      {!keycloak.authenticated && (
-        <button type="button" onClick={() => keycloak.logout()}>
-          Logout
-        </button>
-      )}
-    </> */}
-    <RouterProvider router={router} />
+        <div>The user is {!keycloak.authenticated ? '' : 'NOT'} authenticated</div>
+        {!keycloak.authenticated && (
+          <button type="button" onClick={() => keycloak.logout()}>
+            Logout
+          </button>
+        )}
+      </> */}
+    <StrictMode>
+      <RouterProvider router={router} />
+    </StrictMode>
     {/* <RequireAuth>
-    </RequireAuth> */}
+      </RequireAuth> */}
   </ReactKeycloakProvider>
   // <React.StrictMode>
   //   {/* <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>

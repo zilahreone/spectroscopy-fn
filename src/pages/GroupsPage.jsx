@@ -1,46 +1,47 @@
 import { useEffect, useState } from 'react'
 import groupsTemplate from '../utils/groups'
 import SearchInput from '../components/SearchInput';
-import { useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 
 export default function GroupsPage() {
-  const [groups, setGroups] = useState(groupsTemplate)
+  const [category, setcategory] = useState([])
   const navigator = useNavigate()
+  const categoryData = useLoaderData()
 
   useEffect(() => {
-  }, [])
-  const handleSearch = (value) => {
-  }
+    setcategory(categoryData)
+  }, [categoryData])
+
   const handleSearchInput = (value) => {
-    // setGroups(images)
     if (value && value.trim()) {
-      setGroups(groups.filter(group => group.title.toLocaleLowerCase().includes(value.trim().toLocaleLowerCase())))
+      setcategory(category.filter(group => group.title.toLocaleLowerCase().includes(value.trim().toLocaleLowerCase())))
     } else {
-      setGroups(groups)
+      setcategory(categoryData)
     }
-    // console.log(value);
   }
   return (
     <div className='flex flex-col gap-4'>
-      <SearchInput onEmit={(value) => handleSearch(value)} onInput={(value) => handleSearchInput(value)} />
+      <SearchInput onInput={(value) => handleSearchInput(value)} />
       <div className='flex justify-between'>
-        <div className='text-xl font-medium text-gray-600'>{ groups.length || 0 } groups found</div>
+        <div className='text-xl font-medium text-gray-600'>{ category.length || 0 } category found</div>
       </div>
-      <div className="flex gap-4 mt-4">
+      <div className="flex flex-wrap mt-2 -mx-2 -my-3">
         {
-          groups.map((group, index) => (
-            <div key={index} className={`card bg-base-100 shadow-xl button-hover-animation flex-1`}>
-              <figure>
-                <img
-                  className='w-28'
-                  src={group.src}
-                  alt={group.title} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{group.title}</h2>
-                <p className='text-sm line-clamp-6'>{ group.description }</p>
-                <div className="card-actions">
-                  <button onClick={() => navigator(group.id)} className="btn btn-primary text-gray-800 w-full">12 Datasets</button>
+          category.map((group, index) => (
+            <div key={index} className='px-2 py-3 min-w-[230px] basis-1/5'>
+              <div className={`card bg-base-100 border shadow-xl button-hover-animation`}>
+                <figure>
+                  <img
+                    className='w-32 mt-4'
+                    src={group.src}
+                    alt={group.title} />
+                </figure>
+                <div className="card-body -mt-4">
+                  <h2 className="card-title">{group.title}</h2>
+                  <p className='text-sm line-clamp-3'>{ group.description }</p>
+                  <div className="card-actions mt-4">
+                    <button onClick={() => navigator(group.name.toLocaleLowerCase())} className="btn btn-primary text-gray-800 w-full">12 Datasets</button>
+                  </div>
                 </div>
               </div>
             </div>
