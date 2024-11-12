@@ -16,6 +16,14 @@ export default function Navbar() {
       path: '/'
     },
     {
+      name: 'Samples',
+      path: '/samples'
+    },
+    {
+      name: 'Experiments',
+      path: '/experiments'
+    },
+    {
       name: 'Measurements',
       path: '/measurements'
     },

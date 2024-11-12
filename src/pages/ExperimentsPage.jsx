@@ -6,7 +6,7 @@ import SearchInput from "../components/SearchInput";
 import Modal from "../components/actions/Modal";
 import { useState } from "react";
 
-export default function MeasurementsPage() {
+export default function ExperimentsPage() {
   const measurementData = useLoaderData()
   const navigate = useNavigate()
   const [modalActive, setModalActive] = useState(false)
@@ -36,7 +36,7 @@ export default function MeasurementsPage() {
           <SearchInput />
         </div>
         <div>
-          <Button className={'bg-green-400 text-md'} name={'Create measurement'} onEmit={() => navigate('create', { relative: "path" })} />
+          <Button className={'bg-green-400 text-md'} name={'Create experiment'} onEmit={() => navigate('create', { relative: "path" })} />
         </div>
       </div>
       <TableList

@@ -15,7 +15,7 @@ export default function GroupsDetailPage() {
   const categoryDataId = useLoaderData()
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       {/* <div>GroupsDetailPage</div> */}
       <p className="">{categoryDataId.description}</p>
       <div className="flex gap-8">
@@ -26,8 +26,8 @@ export default function GroupsDetailPage() {
             alt={groupDetail.title}
           />
           <Table header={['Oganization']} body={[['dfsfd'], ['sdfsdf']]} />
-          <Table header={['Equipment Type']} body={[['Portable'], ['Bench Hook']]} />
-          <Table header={['Measurment Technique']} body={[['Raman'], ['FTIR'], ['TDS']]} />
+          <Table header={['Equipment Type']} body={[['Portable'], ['Bench Hook'], ['Handheal']]} />
+          <Table header={['Measurement Technique']} body={[['Raman'], ['FTIR'], ['TDS']]} />
           <Table header={['State']} body={[['Solid'], ['Liquid'], ['Gas']]} />
         </div>
         <div className="basis-3/4 flex flex-col gap-4">

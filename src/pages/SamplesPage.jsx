@@ -6,7 +6,7 @@ import SearchInput from "../components/SearchInput";
 import Modal from "../components/actions/Modal";
 import { useState } from "react";
 
-export default function MeasurementListPage() {
+export default function SamplesPage() {
   const measurementData = useLoaderData()
   const navigate = useNavigate()
   const [modalActive, setModalActive] = useState(false)
@@ -36,7 +36,7 @@ export default function MeasurementListPage() {
           <SearchInput />
         </div>
         <div>
-          <Button className={'bg-green-400 text-md'} name={'Create measurement'} onEmit={() => navigate('create', { relative: "path" })} />
+          <Button className={'bg-green-400 text-md'} name={'Create sample'} onEmit={() => navigate('create', { relative: "path" })} />
         </div>
       </div>
       <TableList
@@ -57,7 +57,7 @@ export default function MeasurementListPage() {
         )
         )}
       />
-      <Modal id={'modal-delete'} isOpen={modalActive} isClose={(evt) => setModalActive(evt)} onEmit={() => handleDelete()} content={'sdfsfsdf'} title={'sfdsdfsfds'} />
+      <Modal id={'modal-delete'} isOpen={modalActive} isClose={(evt) => setModalActive(evt)} onEmit={() => handleDelete()} content={`Are you sure you want to delete ${id}`} title={'Confirm Delete'} />
     </div>
   )
 }

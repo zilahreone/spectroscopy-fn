@@ -9,7 +9,7 @@ import SelectForm from '../components/form/SelectForm';
 import FileInputForm from '../components/form/FileInputForm';
 import Button from '../components/actions/Button';
 
-export default function MeasurementsDetailPage() {
+export default function ExperimentDetailPage() {
   let { measurementId } = useParams();
   const navigator = useNavigate()
   const [experiment, setExperiment] = useState({

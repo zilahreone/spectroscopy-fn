@@ -2,7 +2,7 @@ import { Navigate, createBrowserRouter, json } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import ErrorPage from "../pages/ErrorPage";
 import App from "../App";
-import MeasurementsPage from "../pages/MeasurementsPage";
+import ExperimentFormPage from "../pages/ExperimentFormPage";
 import LoginPage from "../pages/LoginPage";
 import AnalysisPage from "../pages/AnalysisPage";
 import AboutPage from "../pages/AboutPage";
@@ -10,7 +10,7 @@ import SpectraPage from "../pages/SpectraPage";
 import ExperimentListPage from "../pages/ExperimentListPage";
 import RequireAuth from "../components/auth/RequireAuth";
 import useBearStore from "../store";
-import MeasurementsDetailPage from "../pages/MeasurementsDetailPage";
+import ExperimentDetailPage from "../pages/ExperimentDetailPage";
 import api from "../service/api";
 import Navbar from "../core/Navbar";
 import Footer from "../core/Footer";
@@ -21,7 +21,11 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import GroupsDataDetailPage from "../pages/GroupsDataDetailPage";
 import keycloak from "../service/keycloak";
 import ChemicalListPage from "../pages/ChemicalListPage";
-import MeasurementListPage from "../pages/MeasurementListPage";
+import SamplesPage from "../pages/SamplesPage";
+import ExperimentsPage from "../pages/ExperimentsPage";
+import SampleFormPage from "../pages/SampleFormPage";
+import MeasurementsPage from "../pages/MeasurementsPage";
+import MeasurementFormPage from "../pages/MeasurementFormPage";
 
 const parent = (children) => {
   return <>
@@ -151,6 +155,56 @@ const router = createBrowserRouter([
         element: template(<HomePage />, true),
       },
       {
+        path: 'samples',
+        id: 'Samples',
+        children: [
+          {
+            id: 'Samples:index',
+            index: true,
+            loader: handleLoadMeasurement,
+            // element: template(<div className="bg-white custom-container py-6"><MeasurementsPage /></div>
+            element: template(<div className="bg-white custom-container py-6"><SamplesPage /></div>
+            ),
+          },
+          {
+            path: 'create',
+            id: 'Samples:create',
+            element: template(<div className="bg-white custom-container py-6"><SampleFormPage /></div>
+            ),
+          },
+          {
+            path: ':sampleId',
+            id: 'Samples:sampleId',
+            element: template(<div className="bg-white custom-container py-6"><SampleFormPage /></div>),
+          }
+        ]
+      },
+      {
+        path: 'experiments',
+        id: 'Experiments',
+        children: [
+          {
+            id: 'Experiments:index',
+            index: true,
+            loader: handleLoadMeasurement,
+            // element: template(<div className="bg-white custom-container py-6"><MeasurementsPage /></div>
+            element: template(<div className="bg-white custom-container py-6"><ExperimentsPage /></div>
+            ),
+          },
+          {
+            path: 'create',
+            id: 'Experiments:create',
+            element: template(<div className="bg-white custom-container py-6"><ExperimentFormPage /></div>
+            ),
+          },
+          {
+            path: ':experimentId',
+            id: 'Experiments:experimentId',
+            element: template(<div className="bg-white custom-container py-6"><ExperimentDetailPage /></div>),
+          }
+        ]
+      },
+      {
         path: 'measurements',
         id: 'Measurements',
         children: [
@@ -159,19 +213,19 @@ const router = createBrowserRouter([
             index: true,
             loader: handleLoadMeasurement,
             // element: template(<div className="bg-white custom-container py-6"><MeasurementsPage /></div>
-            element: template(<div className="bg-white custom-container py-6"><MeasurementListPage /></div>
+            element: template(<div className="bg-white custom-container py-6"><MeasurementsPage /></div>
             ),
           },
           {
             path: 'create',
             id: 'Measurements:create',
-            element: template(<div className="bg-white custom-container py-6"><MeasurementsPage /></div>
+            element: template(<div className="bg-white custom-container py-6"><MeasurementFormPage /></div>
             ),
           },
           {
             path: ':measurementId',
             id: 'Measurements:measurementId',
-            element: template(<div className="bg-white custom-container py-6"><MeasurementsDetailPage /></div>),
+            element: template(<div className="bg-white custom-container py-6"><MeasurementFormPage /></div>),
           }
         ]
       },
