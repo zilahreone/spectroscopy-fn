@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Modal from '../actions/Modal'
 import Label from '../Label'
 import IconButton from '../actions/IconButton'
@@ -7,7 +7,6 @@ export default function FileInputForm({ className, id, multiple, accept, name, l
   const [files, setFiles] = useState([])
   const [fileSelect, setFileSelect] = useState({ title: null, content: null })
   const [isModalOpen, setIsModalOpen] = useState(false)
-
   // useEffect(() => {
   //   if (fileList.length > 0) setFiles(fileList)
   // }, [])
@@ -35,30 +34,46 @@ export default function FileInputForm({ className, id, multiple, accept, name, l
     document.getElementById(id).value = ''
   }
   const handleRemoveFile = (index) => {
-    const deleted = files.toSpliced(index, 1)
-    setFiles(deleted)
-    if (fileList) onEmit(deleted)
+    // console.log(
+    //   fileList.toSpliced(index, 1)
+    // )
+    // const deleted = files.toSpliced(index, 1)
+    // setFiles(deleted)
+    // if (fileList) onEmit(deleted)
+    onEmit(index)
     document.getElementById(id).value = ''
   }
   const handleShowModal = (e) => {
-    const reader = new FileReader();
-    reader.addEventListener(
-      "load",
-      () => {
-        // this will then display a text file
-        // content.innerText = reader.result;
-        // console.log(reader.result);
-        setFileSelect(Object.assign({}, {
-          content: reader.result,
-          title: e.name,
-        }))
-      },
-      false
-    )
-    if (e) {
-      reader.readAsText(e)
+    if (e.type.includes('image')) {
+      setFileSelect(Object.assign({}, {
+        content: <img className='max-w-96' src={URL.createObjectURL(e)} alt="" />,
+        title: e.name,
+      }))
+      setIsModalOpen(true)
+    } else if (e.type.includes('pdf')) {
+      window.open(URL.createObjectURL(e), '_blank');
     }
-    setIsModalOpen(true)
+    
+    if (accept.includes('image')) {
+    } else {
+      const reader = new FileReader();
+      reader.addEventListener(
+        "load",
+        () => {
+          // this will then display a text file
+          // content.innerText = reader.result;
+          // console.log(reader.result);
+          setFileSelect(Object.assign({}, {
+            content: reader.result,
+            title: e.name,
+          }))
+        },
+        false
+      )
+      if (e) {
+        reader.readAsText(e)
+      }
+    }
     // console.log(reader.readAsText(e));
     // document.getElementById('my_modal_4').showModal()
   }
@@ -73,7 +88,7 @@ export default function FileInputForm({ className, id, multiple, accept, name, l
           {
             fileList && Array.from(fileList).map((file, index) => {
               return (
-                <div className='flex items-center gap-x-2' key={index}>
+                <div className='flex items-center gap-x-0' key={index}>
                   <IconButton
                     onEmit={() => handleRemoveFile(index)}
                     icon={
@@ -92,7 +107,7 @@ export default function FileInputForm({ className, id, multiple, accept, name, l
         </div>
         {/* <input type="file" className="file-input file-input-bordered file-input-primary file-input-sm w-full" placeholder={placeholder} required={required} /> */}
         <input onChange={handleUpload} type="file" name={name} id={id} multiple={multiple} accept={accept} hidden />
-        <label htmlFor={id} className='btn btn-primary btn-sm'>{label || 'Choose file to upload'}</label>
+        <label htmlFor={id} className='mt-2 btn btn-primary btn-sm w-fit'>{label || 'Choose file to upload'}</label>
         <div className="label font-medium">
           <span className="label-text-alt">{blLabel}</span>
           <span className="label-text-alt">{brLabel}</span>
