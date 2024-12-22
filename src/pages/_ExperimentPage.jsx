@@ -7,53 +7,15 @@ import api from '../service/api'
 import keycloak from '../service/keycloak'
 import { json, useNavigate } from 'react-router-dom'
 
-export default function ExperimentListPage() {
+export default function ExperimentPage() {
   const navigate = useNavigate()
-  const [experiments, setExperiments] = useState([
-    {
-      experiment: 'Pure measurements',
-      files: [
-        {
-          name: 'Arabinose 15%+PE85% S1 -- FTIR_absorbance_400-0_0.66713cm-1_Hg_MM_PE-DTGS_5scan -- 2024-04-05_16-03-01.0.dpt'
-        },
-        {
-          name: 'Arabinose 15%+PE85% S1 -- FTIR_absorbance_400-0_0.66713cm-1_Hg_MM_PE-DTGS_5scan -- 2024-04-05_16-03-01.0.dpt'
-        },
-        {
-          name: 'Arabinose 15%+PE85% S1 -- FTIR_absorbance_400-0_0.66713cm-1_Hg_MM_PE-DTGS_5scan -- 2024-04-05_16-03-01.0.dpt'
-        },
-        {
-          name: 'Arabinose 15%+PE85% S1 -- FTIR_absorbance_400-0_0.66713cm-1_Hg_MM_PE-DTGS_5scan -- 2024-04-05_16-03-01.0.dpt'
-        },
-        {
-          name: 'Arabinose 15%+PE85% S1 -- FTIR_absorbance_400-0_0.66713cm-1_Hg_MM_PE-DTGS_5scan -- 2024-04-05_16-03-01.0.dpt'
-        },
-        {
-          name: 'Arabinose 15%+PE85% S1 -- FTIR_absorbance_400-0_0.66713cm-1_Hg_MM_PE-DTGS_5scan -- 2024-04-05_16-03-01.0.dpt'
-        },
-      ]
-    },
-    {
-      experiment: 'Test measurements',
-      files: [
-        {
-          name: 'Arabinose 15%+PE85% S1 -- FTIR_absorbance_400-0_0.66713cm-1_Hg_MM_PE-DTGS_5scan -- 2024-04-05_16-03-01.0.dpt'
-        },
-        {
-          name: 'Arabinose 15%+PE85% S1 -- FTIR_absorbance_400-0_0.66713cm-1_Hg_MM_PE-DTGS_5scan -- 2024-04-05_16-03-01.0.dpt'
-        },
-        {
-          name: 'Arabinose 15%+PE85% S1 -- FTIR_absorbance_400-0_0.66713cm-1_Hg_MM_PE-DTGS_5scan -- 2024-04-05_16-03-01.0.dpt'
-        },
-      ]
-    },
-  ])
+  const [experiments, setExperiments] = useState([])
   const [uploadFilesExperiment, setUploadFilesExperiment] = useState([])
   const [modalActive, setModalActive] = useState(false)
   const [modalMsg, setModalMsg] = useState({})
 
   useEffect(() => {
-    api.get(`/api/experiments`, keycloak.token).then((resp) => {
+    api.get(`/api/experiment`, keycloak.token).then((resp) => {
       resp.json().then(json => {
         console.log(json);
         setExperiments(json)

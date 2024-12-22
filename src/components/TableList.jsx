@@ -15,10 +15,10 @@ export default function TableList({ thead = [], tbody = [] }) {
         <tbody>
           {
             tbody.map((body, b_index) => (
-              <tr key={b_index}>
+              <tr key={`tr-${b_index}`}>
                 {
                   body.map((b, f_index) => (
-                    <td key={b}>
+                    <td key={`${f_index}-${b}`}>
                       { b }
                       {/* <div dangerouslySetInnerHTML={{ __html: b }} /> */}
                     </td>

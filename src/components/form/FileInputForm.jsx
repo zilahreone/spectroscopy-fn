@@ -12,70 +12,34 @@ export default function FileInputForm({ className, id, multiple, accept, name, l
   // }, [])
 
   const handleUpload = (e) => {
-    // fileList undefined
-    // let fl = []
-    // if (files.length === 0) {
-    //   fl = [...files, ...e.target.files]
-    // } else {
-    //   for (const iterator of e.target.files) {
-    //     // console.log(!files.map(file => file.name).includes(iterator.name));
-    //     if (!files.map(file => file.name).includes(iterator.name)) fl = [...files, iterator]
-    //     // setFiles([...files, iterator])
-    //   }
-    // }
-    // setFiles(fl)
-    // if (fileList) onEmit(fl)
-    // for (const file of e.target.files) {
-    //   console.log(file);
-    //   if (!fileList.map(file => file.name).includes(file.name)) fl = [...files, file]
-    // }
-    const filesFilter = Array.from(e.target.files).filter(file => !fileList.map(file => file.name).includes(file.name))
+    // console.log(Array.from(e.target.files));
+    const filesFilter = Array.from(e.target.files).filter(file => !fileList?.map(file => file.name).includes(file.name))
     onEmit(filesFilter)
     document.getElementById(id).value = ''
   }
   const handleRemoveFile = (index) => {
-    // console.log(
-    //   fileList.toSpliced(index, 1)
-    // )
-    // const deleted = files.toSpliced(index, 1)
-    // setFiles(deleted)
-    // if (fileList) onEmit(deleted)
     onEmit(index)
     document.getElementById(id).value = ''
   }
   const handleShowModal = (e) => {
+    // console.log(e);
     if (e.type.includes('image')) {
       setFileSelect(Object.assign({}, {
         content: <img className='max-w-96' src={URL.createObjectURL(e)} alt="" />,
         title: e.name,
       }))
       setIsModalOpen(true)
-    } else if (e.type.includes('pdf')) {
+    } else if (['pdf', 'msword', 'officedocument'].some(type => e.type.includes(type))) {
       window.open(URL.createObjectURL(e), '_blank');
+    } else if (e.type.includes('text')) {
+      fetch(URL.createObjectURL(e)).then(resp => resp.text().then(text => {
+        setFileSelect(Object.assign({}, {
+          content: text,
+          title: e.name,
+        }))
+      }))
+      setIsModalOpen(true)
     }
-    
-    if (accept.includes('image')) {
-    } else {
-      const reader = new FileReader();
-      reader.addEventListener(
-        "load",
-        () => {
-          // this will then display a text file
-          // content.innerText = reader.result;
-          // console.log(reader.result);
-          setFileSelect(Object.assign({}, {
-            content: reader.result,
-            title: e.name,
-          }))
-        },
-        false
-      )
-      if (e) {
-        reader.readAsText(e)
-      }
-    }
-    // console.log(reader.readAsText(e));
-    // document.getElementById('my_modal_4').showModal()
   }
   return (
     <div className={className}>

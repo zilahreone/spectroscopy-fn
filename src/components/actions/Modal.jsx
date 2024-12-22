@@ -12,10 +12,10 @@ export default function Modal({ id, title, content, isOpen, isClose, onEmit }) {
   }, [isOpen])
   return (
     // <dialog id={id} className={`modal ${isOpen && 'modal-open'}`} onKeyUp={(e) => e.code === 'Escape' && isClose(false)}>
-    <dialog id={id} className={`modal ${isOpen && 'modal-open'} modal-bottom sm:modal-middle`}>
-      <div className="modal-box" ref={refModal}>
+    <dialog id={id} className={`modal ${isOpen && 'modal-open'}`}>
+      <div className="modal-box w-fit max-w-5xl" ref={refModal}>
         <h3 className="font-bold text-lg">{ title }</h3>
-        <p className="py-4 whitespace-pre">{ (content) }</p>
+        <div className="py-4 whitespace-pre">{ (content) }</div>
         <div className="modal-action">
           <form method="dialog">
             {/* if there is a button, it will close the modal */}

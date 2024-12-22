@@ -40,8 +40,8 @@ export default function Navbar() {
       path: '/chemicals'
     },
     {
-      name: 'Groups',
-      path: '/groups'
+      name: 'Categorys',
+      path: '/categorys'
     },
     {
       name: 'About',

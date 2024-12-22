@@ -1,6 +1,9 @@
 import React from 'react'
 
 export default function SelectForm({className, required, blLabel, brLabel, tlLabel, trLabel, selected, options, disabled = false, onEmit }) {
+  const log = (log) => {
+    console.log(log);
+  }
   return (
     <div className={className}>
       <label className="form-control w-full">
@@ -8,11 +11,11 @@ export default function SelectForm({className, required, blLabel, brLabel, tlLab
           <span className="label-text">{tlLabel}</span>
           <span className="label-text-alt">{trLabel}</span>
         </div>
-        <select required={required} onChange={(e) => onEmit(e.target.value)} value={selected} disabled={disabled} className="select select-primary select-sm w-full">
-          <option value={''}>Please select...</option>
+        <select required={required} onChange={(e) => onEmit(e.target)} value={selected || ''} disabled={disabled} className="select select-primary select-sm w-full">
+          <option disabled value={''}>Please select...</option>
           {
             options && options.map((option, index) => (
-              <option key={index} value={option.value}>{option.name}</option>
+              <option key={index} id={option.id} value={option.value}>{option.name}</option>
             ))
           }
         </select>

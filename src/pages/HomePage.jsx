@@ -7,7 +7,7 @@ import SearchInput from '../components/SearchInput'
 
 export default function HomePage() {
   const navigate = useNavigate()
-  const categoryData = useLoaderData()
+  const categoryData = useLoaderData([])
   // useEffect(() => {
   //   console.log(keycloak.token);
   // }, [])

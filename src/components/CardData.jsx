@@ -4,9 +4,9 @@ export default function CardData({ title, desc, href = ''}) {
   const navigator = useNavigate()
   return (
     <div className="flex flex-col gap-2 border rounded-xl p-4">
-      <div className="font-normal text-lg pb-6">
+      <div className="font-normal text-lg pb-0">
         <a onClick={() => navigator(href)} className="hover:link hover:text-primary">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+          { title }
         </a>
       </div>
       <div className="text-sm line-clamp-3">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</div>

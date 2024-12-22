@@ -1,11 +1,13 @@
 import { useState } from "react"
 import Plot from "react-plotly.js"
-import { useLocation, useNavigation, useParams } from "react-router-dom"
+import { useLoaderData, useLocation, useNavigate, useNavigation, useParams } from "react-router-dom"
 
 export default function GroupsDataDetailPage() {
+  const experimentData = useLoaderData()
   const [menuIndex, setMenuIndex] = useState(0)
-  const param = useParams()
+  const { id, detail } = useParams()
   const navigation = useNavigation()
+  const navigator = useNavigate()
   const ployData = [
     {
       "x": [
@@ -3334,13 +3336,37 @@ export default function GroupsDataDetailPage() {
     }
   ]
   const handleDownload = () => {
-    console.log('asdadasd');
+    console.log(id, detail);
+
+    console.log(experimentData);
   }
   return (
     <div>
-      <p className="font-medium text-lg">Dataset</p>
+      {/* <p className="font-medium text-lg">Dataset</p> */}
+      <div>
+        <div className="flex items-center gap-x-2">
+          {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-4 h-4">
+              <path d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 144-208 0c-35.3 0-64 28.7-64 64l0 144-48 0c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128zM176 352l32 0c30.9 0 56 25.1 56 56s-25.1 56-56 56l-16 0 0 32c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-48 0-80c0-8.8 7.2-16 16-16zm32 80c13.3 0 24-10.7 24-24s-10.7-24-24-24l-16 0 0 48 16 0zm96-80l32 0c26.5 0 48 21.5 48 48l0 64c0 26.5-21.5 48-48 48l-32 0c-8.8 0-16-7.2-16-16l0-128c0-8.8 7.2-16 16-16zm32 128c8.8 0 16-7.2 16-16l0-64c0-8.8-7.2-16-16-16l-16 0 0 96 16 0zm80-112c0-8.8 7.2-16 16-16l48 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 32 32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 48c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-64 0-64z" />
+            </svg> */}
+          <p className="text-lg font-medium">{experimentData.name}</p>
+        </div>
+        <div className="flex gap-x-2">
+          <div className="flex gap-x-1 badge badge-outline rounded p-2.5 cursor-pointer" onClick={() => handleDownload()}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-4 h-4">
+              <path d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 144-208 0c-35.3 0-64 28.7-64 64l0 144-48 0c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128zM176 352l32 0c30.9 0 56 25.1 56 56s-25.1 56-56 56l-16 0 0 32c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-48 0-80c0-8.8 7.2-16 16-16zm32 80c13.3 0 24-10.7 24-24s-10.7-24-24-24l-16 0 0 48 16 0zm96-80l32 0c26.5 0 48 21.5 48 48l0 64c0 26.5-21.5 48-48 48l-32 0c-8.8 0-16-7.2-16-16l0-128c0-8.8 7.2-16 16-16zm32 128c8.8 0 16-7.2 16-16l0-64c0-8.8-7.2-16-16-16l-16 0 0 96 16 0zm80-112c0-8.8 7.2-16 16-16l48 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 32 32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 48c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-64 0-64z" />
+            </svg>
+            <p className="text-xs font-normal">Download</p>
+          </div>
+          <div className="flex gap-x-1 badge badge-outline rounded p-2.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="w-4 h-4">
+              <path d="M160 80c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 352c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48l0-352zM0 272c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 160c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48L0 272zM368 96l32 0c26.5 0 48 21.5 48 48l0 288c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48z" />
+            </svg>
+            <p className="text-xs font-normal">12 Downloaded</p>
+          </div>
+        </div>
+      </div>
       <div className="py-4">
-        <p className="font-medium">Metadata and Resource</p>
+        {/* <p className="font-medium">Metadata and Resource</p> */}
         <div>
           <div className="flex items-center gap-x-2">
             {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-4 h-4">
@@ -3405,6 +3431,7 @@ export default function GroupsDataDetailPage() {
         <div className="divider"></div>
         <div className="flex flex-col gap-y-4">
           <p className="font-medium">Metadata</p>
+          {/* <pre>{ JSON.stringify(measurementData, null, 2) }</pre> */}
           <table className="table-zebra w-full text-sm">
             {/* <thead>
           <tr>
@@ -3416,66 +3443,112 @@ export default function GroupsDataDetailPage() {
             <tbody className="">
               <tr className="h-8">
                 <td className="font-medium">Experiment Name</td>
-                <td className="pl-8">Effect of Appropriate Starting Quantity to growth of Sea Grapes</td>
+                <td className="pl-0">{experimentData.name}</td>
+              </tr>
+              <tr className="h-8">
+                <td className="font-medium">Sample Name</td>
+                <td className="pl-0">{experimentData.sample?.name}</td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Chemical Name</td>
-                <td className="pl-8"></td>
+                <td className="pl-0">{experimentData.sample?.chemical?.name}</td>
+              </tr>
+              <tr className="h-8">
+                <td className="font-medium">Technique</td>
+                <td className="pl-0">{experimentData.technique.name}</td>
+              </tr>
+              <tr className="h-8">
+                <td className="font-medium">Instrument</td>
+                <td className="pl-0">{experimentData.instrument.name}</td>
+              </tr>
+              <tr className="h-8">
+                <td className="font-medium">Equipment Type</td>
+                <td className="pl-0">{experimentData.equipmentType.name}</td>
+              </tr>
+              <tr className="h-8">
+                <td className="font-medium">Organization</td>
+                <td className="pl-0">{experimentData.organization.name}</td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Category</td>
-                <td className="pl-8"><div className="badge badge-primary cursor-pointer">pure-samples</div></td>
+                <td className="pl-0"><div className="badge badge-primary cursor-pointer" onClick={() => navigator(`/categorys/${id}`)}>{id}</div></td>
               </tr>
               <tr className="h-8">
+                <td className="font-medium">Measurements</td>
+                {/* <td className="pl-0">{ measurementData.organization.name }</td> */}
+              </tr>
+            </tbody>
+            {
+              experimentData.measurements?.map((measurement, index) => (
+                // <table className="table-zebra w-full text-sm" key={`measurement-${index}`}>
+                <tbody className="" key={`measurement-${index}`}>
+                  <tr className="h-8">
+                    <td className="pl-12 font-medium">Name</td>
+                    <td className="">{measurement.name}</td>
+                  </tr>
+                  <tr className="h-8">
+                    <td className="pl-12 font-medium">Name</td>
+                    <td className="">{measurement.name}</td>
+                  </tr>
+                  <tr className="h-8">
+                    <td className="pl-12 font-medium">Name</td>
+                    <td className="">{measurement.name}</td>
+                  </tr>
+                </tbody>
+                // </table>
+              ))
+            }
+            <tbody>
+              {/* <tr className="h-8">
                 <td className="font-medium">Keyworld</td>
-                <td className="pl-8">
+                <td className="pl-0">
                   <div className="flex gap-x-1 items-center">
                     <div className="badge badge-primary cursor-pointer">pure-samples</div>
                     <div className="badge badge-primary cursor-pointer">pure-samples</div>
                     <div className="badge badge-primary cursor-pointer">pure-samples</div>
                   </div>
                 </td>
-              </tr>
+              </tr> */}
               <tr className="h-8">
                 <td className="font-medium">Target</td>
-                <td className="pl-8"><div className="badge badge-primary cursor-pointer">XXXXX</div></td>
+                <td className="pl-0"><div className="badge badge-primary cursor-pointer">XXXXX</div></td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Component</td>
-                <td className="pl-8"><div className="badge badge-primary cursor-pointer">XXXXX</div></td>
+                <td className="pl-0"><div className="badge badge-primary cursor-pointer">XXXXX</div></td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Issue-level objectives of the master plan under the national strategy</td>
-                <td className="pl-8"><div className="badge badge-primary cursor-pointer">XXXXX</div></td>
+                <td className="pl-0"><div className="badge badge-primary cursor-pointer">XXXXX</div></td>
               </tr>
-              <tr className="h-8">
+              {/* <tr className="h-8">
                 <td className="font-medium">Sustainable Development Goals</td>
-                <td className="pl-8">
+                <td className="pl-0">
                   <div className="flex gap-x-1 items-center">
                     <div className="badge badge-primary cursor-pointer">XXXXX</div>
                     <div className="badge badge-primary cursor-pointer">XXXXX</div>
                   </div>
                 </td>
-              </tr>
+              </tr> */}
               <tr className="h-8">
                 <td className="font-medium">Disclosure Level</td>
-                <td className="pl-8">public</td>
+                <td className="pl-0">public</td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">License</td>
-                <td className="pl-8">Open Government</td>
+                <td className="pl-0">Open Government</td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Researcher</td>
-                <td className="pl-8">Ms. XXXX XXXXX</td>
+                <td className="pl-0">Ms. XXXX XXXXX</td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Researcher Email</td>
-                <td className="pl-8">xxxxxx@xxxx.com</td>
+                <td className="pl-0">xxxxxx@xxxx.com</td>
               </tr>
               <tr className="h-8">
                 <td className="font-medium">Status of dataset</td>
-                <td className="pl-8">Active</td>
+                <td className="pl-0">Active</td>
               </tr>
             </tbody>
           </table>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import InputForm from '../components/form/InputForm'
 import FileInputForm from '../components/form/FileInputForm'
 import SelectForm from '../components/form/SelectForm'
@@ -15,26 +15,27 @@ export default function MeasurementFormPage() {
   const { measurementId } = useParams()
   const navigate = useNavigate()
   const [experiments, setExperiments] = useState([])
-  const [measurementDetail, setMeasurementDetail] = useState({})
+  const [instruments, setInstruments] = useState([])
 
   const [technique, setTechnique] = useState(null)
-
   const [measurementForm, setMeasurementForm] = useState({
-    measurementName: null,
+    name: null,
+    experimentId: null,
     experimentName: null,
-    instrument: null,
+    instrumentId: null,
+    instrumentName: null,
+    techniqueName: null,
     measurementCondition: {
       accumulations: null
     },
-    spectrumDescription: null
+    spectrumDescription: null,
+    remark: null,
+    attachment: []
   })
 
-  const [uploadSpectra, setUploadSpectra] = useState([])
-  const [uploadDetail, setUploadDetail] = useState([])
 
   const tdsForm = {
     binder: null,
-    instrument: null,
     measurementCondition: {
       waveLength: '',
       accumulations: null
@@ -45,7 +46,6 @@ export default function MeasurementFormPage() {
     measurementTechnique: null,
     measurementRange: null,
     binder: null,
-    instrument: null,
     measurementCondition: {
       source: null,
       beamSplitter: null,
@@ -63,7 +63,6 @@ export default function MeasurementFormPage() {
         other: null
       }
     },
-    instrument: null,
     measurementCondition: {
       waveLength: '',
       laserPower: '',
@@ -75,7 +74,7 @@ export default function MeasurementFormPage() {
   }
 
   useEffect(() => {
-    const experiments = api.get(`/api/experiments`, keycloak.token)
+    const experiments = api.get(`/api/experiment`, keycloak.token)
     let fetchArr = [experiments]
     if (measurementId) {
       const measurementDetail = api.get(`/api/measurement/${measurementId}`, keycloak.token)
@@ -89,7 +88,8 @@ export default function MeasurementFormPage() {
               value.status === 200 && setExperiments(json)
               break;
             case 1:
-              value.status === 200 && setMeasurementDetail(json)
+              console.log(json);
+              value.status === 200 && handleSetExperiment(json)
               break;
             default:
               break;
@@ -99,93 +99,174 @@ export default function MeasurementFormPage() {
     })
     return () => {
       setExperiments([])
-      setMeasurementDetail({})
+      setMeasurementForm({})
     }
   }, [])
 
+  const handleSetExperiment = async (json) => {
+    const techniqueName = json.experiment.technique.name
+    let attachment = []
+    let signalForm = {}
+    if (techniqueName === 'raman') {
+      signalForm = {
+        ...RAMANForm,
+        measurementCondition: {
+          ...RAMANForm.measurementCondition,
+          ...json.measurementCondition
+        },
+        measurementTechnique: {
+          ...RAMANForm.measurementTechnique,
+          sers: {
+            ...RAMANForm.measurementTechnique.sers,
+            ...json.measurementTechnique.sers
+          }
+        },
+        typeData: json.typeData
+      }
+    }
+    if (json.attachment.name) {
+      const result = await fetchFile(json.attachment.name)
+      attachment = [new File([result], json.attachment.name, { type: json.attachment.mimeType })]
+    }
+    setTechnique(techniqueName)
+    setMeasurementForm({
+      ...measurementForm,
+      id: json.id,
+      name: json.name,
+      experimentId: json.experiment.id,
+      experimentName: json.experiment.name,
+      techniqueName: techniqueName,
+      attachment: attachment,
+      ...signalForm
+    })
+  }
+
+  const fetchFile = (filename) => {
+    return new Promise((resolve, reject) => {
+      api.get(`/api/measurement/${measurementId}/${filename}`, keycloak.token).then(resp => {
+        if (resp.status === 200) {
+          resp.blob().then(blob => {
+            resolve(blob)
+          })
+        } else {
+          reject(resp.statusText)
+        }
+      })
+    })
+  }
+
   const handleCreateExperiment = async () => {
     const formData = new FormData()
-    uploadSpectra.forEach(element => {
-      formData.append('files', element)
+    let attachmentObj = {
+      name: null,
+      size: null,
+      mimeType: null
+    }
+    Array.from(measurementForm.attachment).forEach(attach => {
+      // console.log(attach);
+      formData.append('attachment', attach)
+      const { name, size, type } = attach
+      attachmentObj = {
+        name, size, mimeType: type || attach.mimeType
+      }
     })
-    uploadDetail.forEach(element => {
-      formData.append('others_attachments', element)
-    })
-    formData.append('data', JSON.stringify(measurements))
-    api.post(`/api/experiments`, formData, keycloak.token).then(resp => {
+    formData.append('data', JSON.stringify({
+      ...measurementForm,
+      attachment: attachmentObj
+    }))
+    api.post(`/api/measurement`, formData, keycloak.token).then(resp => {
       if (resp.status === 201) {
-        navigate('/list')
+        // navigate('/list')
       } else {
         resp.json().then(json => alert(JSON.stringify(json)))
       }
     })
   }
-  const handleUploadDetail = (key, files) => {
-    const arrObj = Array.from(files).map(file => {
-      const { name, size, type } = file
-      return { name, size, type }
-    })
-    handleSetMeasurements(key, arrObj)
-    // key == 'others_attachments' ? setUploadDetail(files) : 
-    switch (key) {
-      case 'others_attachments':
-        setUploadDetail([...uploadDetail, ...files])
-        break
-      case 'files':
-        setUploadSpectra([...uploadSpectra, ...files])
-        break
-    }
-  }
 
-  const handleSelectExperiment = (value) => {
-    // const experiment = experiments.filter(exp => exp.name === value)[0]
-    // setMeasurementForm(form => ({ ...form, experimentName: value, experimentId: experiment.id }))
-    switch (value) {
+  const handleSelectExperiment = ({ id, name }) => {
+    const experiment = experiments.reduce((prev, curr) => {
+      if (curr.name === name) {
+        prev = curr
+      }
+      return prev
+    }, {})
+    const technique = experiment.technique?.name
+    let measurementObj = {
+      ...measurementForm,
+      experimentId: id,
+      experimentName: name,
+      instrumentId: experiment.instrument?.id,
+      instrumentName: experiment.instrument?.name,
+      techniqueName: technique
+    }
+
+    switch (technique) {
       case 'tds':
-        setMeasurementForm({ ...measurementForm, ...tdsForm })
+        setMeasurementForm({ ...tdsForm, ...measurementForm, experimentName: value })
         break;
       case 'ftir':
-        setMeasurementForm({ ...measurementForm, ...FTIRForm })
+        setMeasurementForm({ ...FTIRForm, ...measurementForm, experimentName: value })
         break;
       case 'raman':
-        setMeasurementForm({ ...measurementForm, ...RAMANForm })
+        // setMeasurementForm({ ...RAMANForm, ...measurementForm, experimentId: id, experimentName: name, instrumentId: experiment.instrument?.id, instrumentName: experiment.instrument?.name, techniqueName: experiment.technique?.name })
+        setMeasurementForm({
+          ...measurementObj,
+          ...RAMANForm,
+          measurementCondition: {
+            ...measurementForm.measurementCondition,
+            ...RAMANForm.measurementCondition
+          }
+        })
         break;
       default:
         break;
     }
-    setTechnique(value)
+    setTechnique(technique)
   }
 
-  const renderMeasurementTechnique = () => {
-    let condition = []
+  const handleUploads = (file) => {
+    let attachment = null
+    if (typeof file === 'number') {
+      attachment = measurementForm.attachment.toSpliced(file, 1)
+    } else {
+      attachment = file
+      // attachments = [...measurementForm.attachments, ...files]
+    }
+    setMeasurementForm({ ...measurementForm, attachment: attachment })
   }
+
+  useMemo(() => {
+    // console.log('memo');
+    setMeasurementForm((prev) => ({
+      ...prev,
+      name: `${prev.experimentName} (` +
+        `${prev.measurementTechnique?.sers?.chip},${prev.measurementTechnique?.sers?.nanoparticles},${prev.measurementTechnique?.sers?.papers},${prev.measurementTechnique?.sers?.other})`.replaceAll('null', '') +
+        `(${prev.measurementCondition?.waveLength},${prev.measurementCondition?.laserPower?.replace('%', 'pct')},${prev.measurementCondition?.exposureTime},${prev.measurementCondition?.lens},${prev.measurementCondition?.accumulations})`.replaceAll('null', '')
+    }))
+  }, [measurementForm.measurementTechnique, measurementForm.measurementCondition])
   return (
     <>
       <div className='flex flex-col'>
         <div className='flex gap-x-2 flex-col sm:flex-row md:gap-x-4 lg:gap-x-8'>
-          <InputForm tlLabel={'Measurement name'}
+          <InputForm tlLabel={'Name'}
             className={'flex-1'}
             required
-            value={measurementForm.measurementName}
-            onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementName: val }))}
+            value={measurementForm.name}
+            onEmit={(val) => setMeasurementForm(form => ({ ...form, name: val }))}
           />
           <SelectForm
             className={'flex-1'}
             required
             tlLabel={'Experiment name'}
             selected={measurementForm.experimentName}
-            options={['tds', 'ftir', 'raman'].map(val => ({ name: val, value: val }))}
-            // options={experiments}
-            onEmit={(val) => handleSelectExperiment(val)}
-          />
-          <SelectForm
-            className={'flex-1'}
-            required
-            disabled
-            tlLabel={'Instrument'}
-            selected={measurementForm.instrument}
             options={experiments}
-            onEmit={(val) => handleSelectExperiment(val)}
+            onEmit={(target) => handleSelectExperiment({ id: target.selectedOptions[0].id, name: target.value })}
+          />
+          <InputForm tlLabel={'Instrument'}
+            className={'flex-1'}
+            disabled
+            required
+            value={measurementForm.instrumentName}
           />
         </div>
 
@@ -206,6 +287,12 @@ export default function MeasurementFormPage() {
             required
             value={measurementForm.spectrumDescription}
             onEmit={(val) => setMeasurementForm(form => ({ ...form, spectrumDescription: val }))}
+          />
+          <InputForm tlLabel={'Remark'}
+            className={'flex-1'}
+            required
+            value={measurementForm.remark}
+            onEmit={(val) => setMeasurementForm(form => ({ ...form, remark: val }))}
           />
         </div>
 
@@ -229,25 +316,25 @@ export default function MeasurementFormPage() {
                       <InputForm tlLabel={'Chip'}
                         className={'flex-1'}
                         required
-                        value={measurementForm.measurementTechnique.sers.chip}
+                        value={measurementForm.measurementTechnique?.sers?.chip}
                         onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: { ...form.measurementTechnique, sers: { ...form.measurementTechnique.sers, chip: val } } }))}
                       />
                       <InputForm tlLabel={'Nanoparticles'}
                         className={'flex-1'}
                         required
-                        value={measurementForm.measurementTechnique.sers.nanoparticles}
+                        value={measurementForm.measurementTechnique?.sers?.nanoparticles}
                         onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: { ...form.measurementTechnique, sers: { ...form.measurementTechnique.sers, nanoparticles: val } } }))}
                       />
                       <InputForm tlLabel={'Papers'}
                         className={'flex-1'}
                         required
-                        value={measurementForm.measurementTechnique.sers.papers}
+                        value={measurementForm.measurementTechnique?.sers?.papers}
                         onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: { ...form.measurementTechnique, sers: { ...form.measurementTechnique.sers, papers: val } } }))}
                       />
                       <InputForm tlLabel={'Other'}
                         className={'flex-1'}
                         required
-                        value={measurementForm.measurementTechnique.sers.other}
+                        value={measurementForm.measurementTechnique?.sers?.other}
                         onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: { ...form.measurementTechnique, sers: { ...form.measurementTechnique.sers, other: val } } }))}
                       />
                     </>
@@ -283,10 +370,9 @@ export default function MeasurementFormPage() {
                   required
                   tlLabel={'Wavelength'}
                   type="number"
-                  isLabelInside
-                  labelInside={'nm'}
-                  value={measurementForm.waveLength?.split('nm')[0]}
-                  onEmit={(val) => setMeasurementForm(form => ({ ...form, waveLength: val + 'nm' }))}
+                  suffix={'nm'}
+                  value={measurementForm.measurementCondition?.waveLength}
+                  onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, waveLength: val } }))}
                 />
               )
             }
@@ -297,22 +383,22 @@ export default function MeasurementFormPage() {
                     className={'flex-1'}
                     tlLabel={'Source'}
                     required
-                    value={measurementForm.source}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, source: val }))}
+                    value={measurementForm.measurementCondition?.source}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, source: val } }))}
                   />
                   <InputForm
                     className={'flex-1'}
                     tlLabel={'Beam Splitter'}
                     required
-                    value={measurementForm.beamSplitter}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, beamSplitter: val }))}
+                    value={measurementForm.measurementCondition?.beamSplitter}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, beamSplitter: val } }))}
                   />
                   <InputForm
                     className={'flex-1'}
                     tlLabel={'Detector'}
                     required
-                    value={measurementForm.detector}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, detector: val }))}
+                    value={measurementForm.measurementCondition?.detector}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, detector: val } }))}
                   />
                 </>
               )
@@ -325,30 +411,27 @@ export default function MeasurementFormPage() {
                     tlLabel={'Laser power'}
                     required
                     type="number"
-                    isLabelInside
-                    labelInside={'%'}
-                    value={measurementForm.laserPower?.split('%')[0]}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, laserPower: val + '%' }))}
+                    suffix={'%'}
+                    value={measurementForm.measurementCondition?.laserPower}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, laserPower: val } }))}
                   />
                   <InputForm
                     className={'flex-1'}
                     tlLabel={'Exposure time'}
                     required
                     type="number"
-                    isLabelInside
-                    labelInside={'s'}
-                    value={measurementForm.exposureTime?.split('s')[0]}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, exposureTime: val + 's' }))}
+                    suffix={'s'}
+                    value={measurementForm.measurementCondition?.exposureTime}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, exposureTime: val } }))}
                   />
                   <InputForm
                     className={'flex-1'}
                     tlLabel={'Lens'}
                     required
                     type="number"
-                    isLabelInside
-                    labelInside={'X'}
-                    value={measurementForm.lens?.split('X')[0]}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, lens: val + 'X' }))}
+                    suffix={'x'}
+                    value={measurementForm.measurementCondition?.lens}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, lens: val } }))}
                   />
                 </>
               )
@@ -358,8 +441,8 @@ export default function MeasurementFormPage() {
               tlLabel={'Accumulations'}
               required
               type='number'
-              value={measurementForm.accumulations}
-              onEmit={(val) => setMeasurementForm(form => ({ ...form, accumulations: val }))}
+              value={measurementForm.measurementCondition?.accumulations}
+              onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, accumulations: val } }))}
             />
           </div>
         </div>
@@ -376,79 +459,15 @@ export default function MeasurementFormPage() {
             </div>
           )
         }
-        {/* <div className='flex gap-x-2 flex-col sm:flex-row md:gap-x-4 lg:gap-x-8'>
-          <InputForm
-            className={'flex-1'}
-            required
-            tlLabel={'Wavelength'}
-            type="number"
-            isLabelInside
-            labelInside={'nm'}
-            value={measurementForm.waveLength.split('nm')[0]}
-            onEmit={(val) => setMeasurementForm(form => ({ ...form, waveLength: val + 'nm' }))}
-          />
-          <InputForm
-            className={'flex-1'}
-            tlLabel={'Laser power'}
-            required
-            type="number"
-            isLabelInside
-            labelInside={'%'}
-            value={measurementForm.laserPower.split('%')[0]}
-            onEmit={(val) => setMeasurementForm(form => ({ ...form, laserPower: val + '%' }))}
-          />
-          <InputForm
-            className={'flex-1'}
-            tlLabel={'Exposure time'}
-            required
-            type="number"
-            isLabelInside
-            labelInside={'s'}
-            value={measurementForm.exposureTime.split('s')[0]}
-            onEmit={(val) => setMeasurementForm(form => ({ ...form, exposureTime: val + 's' }))}
-          />
-          <InputForm
-            className={'flex-1'}
-            tlLabel={'Accumulations'}
-            required
-            type='number'
-            value={measurementForm.accumulations}
-            onEmit={(val) => setMeasurementForm(form => ({ ...form, accumulations: val }))}
-          />
-          <InputForm
-            className={'flex-1'}
-            tlLabel={'Lens'}
-            required
-            type="number"
-            isLabelInside
-            labelInside={'X'}
-            value={measurementForm.lens.split('X')[0]}
-            onEmit={(val) => setMeasurementForm(form => ({ ...form, lens: val + 'X' }))}
-          />
-        </div> */}
-        {
-          // renderMeasurementTechnique()
-        }
-        {/* <FileInputForm
-          className='min-w-[250px] w-1/3'
-          accept={'application/pdf, text/plain, .doc ,.docx, image/*'}
-          fileList={uploadDetail}
-          onEmit={(files) => handleUploadDetail('others_attachments', files)}
-          id={'other'}
-          label={'Upload details as attachment'}
-          multiple
-          tlLabel={'Upload details'}
-        /> */}
-        {/* <FileInputForm
-          className='min-w-[250px] w-1/3'
-          accept={''}
-          fileList={uploadSpectra}
-          onEmit={(files) => handleUploadDetail('files', files)}
+        <FileInputForm
+          className=''
+          accept={'text/plain'}
+          fileList={measurementForm.attachment}
+          onEmit={(file) => handleUploads(file)}
           id={'upload_spectra'}
-          label={'Upload details as attachment'}
-          multiple
-          tlLabel={'Upload Spectra'}
-        /> */}
+          label={'Upload attachments'}
+          tlLabel={'Attachments'}
+        />
       </div>
       <div className='mt-4 flex justify-end'>
         <Button type={'submit'} onEmit={() => handleCreateExperiment()} color={'primary'} name={'Create measurement'} />

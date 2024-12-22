@@ -4,13 +4,27 @@ import IconButton from "../components/actions/IconButton";
 import Button from "../components/actions/Button";
 import SearchInput from "../components/SearchInput";
 import Modal from "../components/actions/Modal";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import keycloak from "../service/keycloak";
+import api from "../service/api";
 
 export default function ExperimentsPage() {
-  const measurementData = useLoaderData()
+  // const measurementData = useLoaderData()
+  const [experiments, setExperiments] = useState([])
   const navigate = useNavigate()
   const [modalActive, setModalActive] = useState(false)
   const [id, setId] = useState(-1)
+
+  useEffect(() => {
+    api.get(`/api/experiment`, keycloak.token).then(resp => {
+      resp.json().then(json => {
+        resp.status === 200 ? setExperiments(json) : setExperiments([])
+      })
+    })
+  }, [])
+
+  const memoExperiments = useMemo(() => {
+  }, [experiments])
 
   const handleDelete = () => {
     console.log('delete', id);
@@ -39,23 +53,25 @@ export default function ExperimentsPage() {
           <Button className={'bg-green-400 text-md'} name={'Create experiment'} onEmit={() => navigate('create', { relative: "path" })} />
         </div>
       </div>
+      <pre>{JSON.stringify(memoExperiments, null, 2)}</pre>
       <TableList
         thead={[
           'No.',
-          'Chemical name',
+          'Sample name',
           'Measurement Technique',
+          'Instrument',
           'Equipment Type',
           'Collect By',
-          ''
+          'Tools',
         ]}
-        tbody={measurementData.map(md => (
-          md.map((field, f_index) => (
-            md.length - 1 === f_index
-              ? <div className="flex gap-2 items-center">{ field.map((f, index) => (<div key={`${index}-tools`} className="cursor-pointer" onClick={() => handleTools(index, md[0])}>{ f }</div>)) }</div>
-              : field
-          ))
-        )
-        )}
+      // tbody={memoExperiments.map(md => (
+      //   md.map((field, f_index) => (
+      //     md.length - 1 === f_index
+      //       ? <div className="flex gap-2 items-center">{ field.map((f, index) => (<div key={`${index}-tools`} className="cursor-pointer" onClick={() => handleTools(index, md[0])}>{ f }</div>)) }</div>
+      //       : field
+      //   ))
+      // )
+      // )}
       />
       <Modal id={'modal-delete'} isOpen={modalActive} isClose={(evt) => setModalActive(evt)} onEmit={() => handleDelete()} content={`Are you sure you want to delete ${id}`} title={'Confirm Delete'} />
     </div>
