@@ -25,20 +25,21 @@ export default function MeasurementFormPage() {
     instrumentId: null,
     instrumentName: null,
     techniqueName: null,
-    measurementCondition: {
-      accumulations: null
+    signal: {
+      measurementCondition: {
+        accumulations: null
+      },
     },
     spectrumDescription: null,
     remark: null,
     attachment: []
   })
 
-
   const tdsForm = {
     binder: null,
     measurementCondition: {
       waveLength: '',
-      accumulations: null
+      // accumulations: null
     }
   }
 
@@ -50,7 +51,7 @@ export default function MeasurementFormPage() {
       source: null,
       beamSplitter: null,
       detector: null,
-      accumulations: null
+      // accumulations: null
     }
   }
 
@@ -64,11 +65,11 @@ export default function MeasurementFormPage() {
       }
     },
     measurementCondition: {
-      waveLength: '',
-      laserPower: '',
-      exposureTime: '',
-      accumulations: null,
-      lens: '',
+      waveLength: null,
+      laserPower: null,
+      exposureTime: null,
+      // accumulations: null,
+      lens: null,
     },
     typeData: null
   }
@@ -88,7 +89,6 @@ export default function MeasurementFormPage() {
               value.status === 200 && setExperiments(json)
               break;
             case 1:
-              console.log(json);
               value.status === 200 && handleSetExperiment(json)
               break;
             default:
@@ -98,35 +98,42 @@ export default function MeasurementFormPage() {
       })
     })
     return () => {
-      setExperiments([])
-      setMeasurementForm({})
+      // setExperiments([])
+      // setMeasurementForm({})
     }
   }, [])
 
   const handleSetExperiment = async (json) => {
-    const techniqueName = json.experiment.technique.name
+    // console.log(json);
+    const techniqueName = json.experiment.technique.name    
     let attachment = []
     let signalForm = {}
-    if (techniqueName === 'raman') {
-      signalForm = {
-        ...RAMANForm,
-        measurementCondition: {
-          ...RAMANForm.measurementCondition,
-          ...json.measurementCondition
-        },
-        measurementTechnique: {
-          ...RAMANForm.measurementTechnique,
-          sers: {
-            ...RAMANForm.measurementTechnique.sers,
-            ...json.measurementTechnique.sers
-          }
-        },
-        typeData: json.typeData
-      }
+    switch (techniqueName) {
+      case 'raman':
+        signalForm = {
+          ...RAMANForm,
+          measurementCondition: {
+            ...RAMANForm.measurementCondition,
+            ...json.raman.measurementCondition
+          },
+          measurementTechnique: {
+            ...RAMANForm.measurementTechnique,
+            sers: {
+              ...RAMANForm.measurementTechnique.sers,
+              ...json.raman.measurementTechnique.sers
+            }
+          },
+          typeData: json.raman.typeData
+        }
+        break;
+      default:
+        break;
     }
     if (json.attachment.name) {
-      const result = await fetchFile(json.attachment.name)
-      attachment = [new File([result], json.attachment.name, { type: json.attachment.mimeType })]
+      await fetchFile(json.attachment.name).then(result => {
+        attachment = [new File([result], json.attachment.name, { type: json.attachment.mimeType })]
+      }).catch(err => {
+      })
     }
     setTechnique(techniqueName)
     setMeasurementForm({
@@ -135,9 +142,16 @@ export default function MeasurementFormPage() {
       name: json.name,
       experimentId: json.experiment.id,
       experimentName: json.experiment.name,
+      instrumentId: json.experiment.instrument.id,
+      instrumentName: json.experiment.instrument.name,
       techniqueName: techniqueName,
+      spectrumDescription: json.spectrumDescription,
+      remark: json.remark,
       attachment: attachment,
-      ...signalForm
+      signal: {
+        ...measurementForm.signal,
+        ...signalForm
+      }
     })
   }
 
@@ -149,7 +163,7 @@ export default function MeasurementFormPage() {
             resolve(blob)
           })
         } else {
-          reject(resp.statusText)
+          reject(resp.status)
         }
       })
     })
@@ -174,13 +188,24 @@ export default function MeasurementFormPage() {
       ...measurementForm,
       attachment: attachmentObj
     }))
-    api.post(`/api/measurement`, formData, keycloak.token).then(resp => {
-      if (resp.status === 201) {
-        // navigate('/list')
-      } else {
-        resp.json().then(json => alert(JSON.stringify(json)))
-      }
-    })
+    // console.log(measurementForm);
+    if (measurementId) {
+      api.patch(`/api/measurement/${measurementId}`, formData, keycloak.token).then(resp => {
+        if (resp.status === 200) {
+          // navigate('/list')
+        } else {
+          resp.json().then(json => alert(JSON.stringify(json)))
+        }
+      })
+    } else {
+      api.post(`/api/measurement`, formData, keycloak.token).then(resp => {
+        if (resp.status === 201) {
+          // navigate('/list')
+        } else {
+          resp.json().then(json => alert(JSON.stringify(json)))
+        }
+      })
+    }
   }
 
   const handleSelectExperiment = ({ id, name }) => {
@@ -208,13 +233,15 @@ export default function MeasurementFormPage() {
         setMeasurementForm({ ...FTIRForm, ...measurementForm, experimentName: value })
         break;
       case 'raman':
-        // setMeasurementForm({ ...RAMANForm, ...measurementForm, experimentId: id, experimentName: name, instrumentId: experiment.instrument?.id, instrumentName: experiment.instrument?.name, techniqueName: experiment.technique?.name })
         setMeasurementForm({
           ...measurementObj,
-          ...RAMANForm,
-          measurementCondition: {
-            ...measurementForm.measurementCondition,
-            ...RAMANForm.measurementCondition
+          signal: {
+            ...measurementObj.signal,
+            ...RAMANForm,
+            measurementCondition: {
+              ...measurementObj.signal.measurementCondition,
+              ...RAMANForm.measurementCondition,
+            }
           }
         })
         break;
@@ -240,10 +267,11 @@ export default function MeasurementFormPage() {
     setMeasurementForm((prev) => ({
       ...prev,
       name: `${prev.experimentName} (` +
-        `${prev.measurementTechnique?.sers?.chip},${prev.measurementTechnique?.sers?.nanoparticles},${prev.measurementTechnique?.sers?.papers},${prev.measurementTechnique?.sers?.other})`.replaceAll('null', '') +
-        `(${prev.measurementCondition?.waveLength},${prev.measurementCondition?.laserPower?.replace('%', 'pct')},${prev.measurementCondition?.exposureTime},${prev.measurementCondition?.lens},${prev.measurementCondition?.accumulations})`.replaceAll('null', '')
+        `${prev.signal.measurementTechnique?.sers?.chip},${prev.signal.measurementTechnique?.sers?.nanoparticles},${prev.signal.measurementTechnique?.sers?.papers},${prev.signal.measurementTechnique?.sers?.other})`.replaceAll('null', '') +
+        `(${prev.signal.measurementCondition?.waveLength},${prev.signal.measurementCondition?.laserPower?.replace('%', 'pct')},${prev.signal.measurementCondition?.exposureTime},${prev.signal.measurementCondition?.lens},${prev.signal.measurementCondition?.accumulations})`.replaceAll('null', '')
     }))
-  }, [measurementForm.measurementTechnique, measurementForm.measurementCondition])
+  }, [measurementForm.signal.measurementTechnique, measurementForm.signal.measurementCondition])
+
   return (
     <>
       <div className='flex flex-col'>
@@ -277,7 +305,7 @@ export default function MeasurementFormPage() {
                 className={'flex-1'}
                 tlLabel={'Binder'}
                 required
-                value={measurementForm.binder}
+                value={measurementForm.signal?.binder}
                 onEmit={(val) => setMeasurementForm(form => ({ ...form, binder: val }))}
               />
             )
@@ -304,9 +332,9 @@ export default function MeasurementFormPage() {
                 {
                   technique === 'ftir' && (
                     <div className='flex flex-col sm:flex-row'>
-                      <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: val }))} label={'Transmission'} value={'transmission'} name={'measurementTechnique'} checked={measurementForm.measurementTechnique} />
-                      <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: val }))} label={'Reflection'} value={'reflection'} name={'measurementTechnique'} checked={measurementForm.measurementTechnique} />
-                      <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: val }))} label={'ATR'} value={'atr'} name={'measurementTechnique'} checked={measurementForm.measurementTechnique} />
+                      <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementTechnique: val } }))} label={'Transmission'} value={'transmission'} name={'measurementTechnique'} checked={measurementForm.signal.measurementTechnique} />
+                      <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementTechnique: val } }))} label={'Reflection'} value={'reflection'} name={'measurementTechnique'} checked={measurementForm.signal.measurementTechnique} />
+                      <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementTechnique: val } }))} label={'ATR'} value={'atr'} name={'measurementTechnique'} checked={measurementForm.signal.measurementTechnique} />
                     </div>
                   )
                 }
@@ -316,26 +344,26 @@ export default function MeasurementFormPage() {
                       <InputForm tlLabel={'Chip'}
                         className={'flex-1'}
                         required
-                        value={measurementForm.measurementTechnique?.sers?.chip}
-                        onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: { ...form.measurementTechnique, sers: { ...form.measurementTechnique.sers, chip: val } } }))}
+                        value={measurementForm.signal.measurementTechnique?.sers?.chip}
+                        onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementTechnique: { ...form.signal.measurementTechnique, sers: { ...form.signal.measurementTechnique.sers, chip: val } } } }))}
                       />
                       <InputForm tlLabel={'Nanoparticles'}
                         className={'flex-1'}
                         required
-                        value={measurementForm.measurementTechnique?.sers?.nanoparticles}
-                        onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: { ...form.measurementTechnique, sers: { ...form.measurementTechnique.sers, nanoparticles: val } } }))}
+                        value={measurementForm.signal.measurementTechnique?.sers?.nanoparticles}
+                        onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementTechnique: { ...form.signal.measurementTechnique, sers: { ...form.signal.measurementTechnique.sers, nanoparticles: val } } } }))}
                       />
                       <InputForm tlLabel={'Papers'}
                         className={'flex-1'}
                         required
-                        value={measurementForm.measurementTechnique?.sers?.papers}
-                        onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: { ...form.measurementTechnique, sers: { ...form.measurementTechnique.sers, papers: val } } }))}
+                        value={measurementForm.signal.measurementTechnique?.sers?.papers}
+                        onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementTechnique: { ...form.signal.measurementTechnique, sers: { ...form.signal.measurementTechnique.sers, papers: val } } } }))}
                       />
                       <InputForm tlLabel={'Other'}
                         className={'flex-1'}
                         required
-                        value={measurementForm.measurementTechnique?.sers?.other}
-                        onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementTechnique: { ...form.measurementTechnique, sers: { ...form.measurementTechnique.sers, other: val } } }))}
+                        value={measurementForm.signal.measurementTechnique?.sers?.other}
+                        onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementTechnique: { ...form.signal.measurementTechnique, sers: { ...form.signal.measurementTechnique.sers, other: val } } } }))}
                       />
                     </>
                   )
@@ -351,9 +379,9 @@ export default function MeasurementFormPage() {
               <span className='text-l font-medium mt-2 mb-4'>Measurement Range</span>
               <div className='flex gap-x-2 flex-col sm:flex-row md:gap-x-4 lg:gap-x-8'>
                 <div className='flex flex-col sm:flex-row'>
-                  <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementRange: val }))} label={'NIR'} value={'nir'} name={'measurementRange'} checked={measurementForm.measurementRange} />
-                  <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementRange: val }))} label={'MIR'} value={'mir'} name={'measurementRange'} checked={measurementForm.measurementRange} />
-                  <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementRange: val }))} label={'FIR'} value={'fir'} name={'measurementRange'} checked={measurementForm.measurementRange} />
+                  <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementRange: val } }))} label={'NIR'} value={'nir'} name={'measurementRange'} checked={measurementForm.signal.measurementRange} />
+                  <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementRange: val } }))} label={'MIR'} value={'mir'} name={'measurementRange'} checked={measurementForm.signal.measurementRange} />
+                  <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementRange: val } }))} label={'FIR'} value={'fir'} name={'measurementRange'} checked={measurementForm.signal.measurementRange} />
                 </div>
               </div>
             </div>
@@ -371,8 +399,8 @@ export default function MeasurementFormPage() {
                   tlLabel={'Wavelength'}
                   type="number"
                   suffix={'nm'}
-                  value={measurementForm.measurementCondition?.waveLength}
-                  onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, waveLength: val } }))}
+                  value={measurementForm.signal.measurementCondition?.waveLength}
+                  onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementCondition: { ...form.signal.measurementCondition, waveLength: val } } }))}
                 />
               )
             }
@@ -383,22 +411,22 @@ export default function MeasurementFormPage() {
                     className={'flex-1'}
                     tlLabel={'Source'}
                     required
-                    value={measurementForm.measurementCondition?.source}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, source: val } }))}
+                    value={measurementForm.signal.measurementCondition?.source}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementCondition: { ...form.signal.measurementCondition, source: val } } }))}
                   />
                   <InputForm
                     className={'flex-1'}
                     tlLabel={'Beam Splitter'}
                     required
-                    value={measurementForm.measurementCondition?.beamSplitter}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, beamSplitter: val } }))}
+                    value={measurementForm.signal.measurementCondition?.beamSplitter}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementCondition: { ...form.signal.measurementCondition, beamSplitter: val } } }))}
                   />
                   <InputForm
                     className={'flex-1'}
                     tlLabel={'Detector'}
                     required
-                    value={measurementForm.measurementCondition?.detector}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, detector: val } }))}
+                    value={measurementForm.signal.measurementCondition?.detector}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementCondition: { ...form.signal.measurementCondition, detector: val } } }))}
                   />
                 </>
               )
@@ -412,8 +440,8 @@ export default function MeasurementFormPage() {
                     required
                     type="number"
                     suffix={'%'}
-                    value={measurementForm.measurementCondition?.laserPower}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, laserPower: val } }))}
+                    value={measurementForm.signal.measurementCondition?.laserPower}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementCondition: { ...form.signal.measurementCondition, laserPower: val } } }))}
                   />
                   <InputForm
                     className={'flex-1'}
@@ -421,8 +449,8 @@ export default function MeasurementFormPage() {
                     required
                     type="number"
                     suffix={'s'}
-                    value={measurementForm.measurementCondition?.exposureTime}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, exposureTime: val } }))}
+                    value={measurementForm.signal.measurementCondition?.exposureTime}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementCondition: { ...form.signal.measurementCondition, exposureTime: val } } }))}
                   />
                   <InputForm
                     className={'flex-1'}
@@ -430,8 +458,8 @@ export default function MeasurementFormPage() {
                     required
                     type="number"
                     suffix={'x'}
-                    value={measurementForm.measurementCondition?.lens}
-                    onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, lens: val } }))}
+                    value={measurementForm.signal.measurementCondition?.lens}
+                    onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementCondition: { ...form.signal.measurementCondition, lens: val } } }))}
                   />
                 </>
               )
@@ -441,8 +469,8 @@ export default function MeasurementFormPage() {
               tlLabel={'Accumulations'}
               required
               type='number'
-              value={measurementForm.measurementCondition?.accumulations}
-              onEmit={(val) => setMeasurementForm(form => ({ ...form, measurementCondition: { ...form.measurementCondition, accumulations: val } }))}
+              value={measurementForm.signal.measurementCondition?.accumulations}
+              onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, measurementCondition: { ...form.signal.measurementCondition, accumulations: val } } }))}
             />
           </div>
         </div>
@@ -451,11 +479,9 @@ export default function MeasurementFormPage() {
             <div className="border rounded-xl p-4">
               <span className='text-l font-medium mt-2 mb-4'>Type of Data</span>
               <div className='flex flex-col sm:flex-row'>
-                <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, typeData: val }))} label={'Single'} value={'single'} name={'typeData'} checked={measurementForm.typeData} />
-                <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, typeData: val }))} label={'Mapping'} value={'mapping'} name={'typeData'} checked={measurementForm.typeData} />
+                <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, typeData: val } }))} label={'Single'} value={'single'} name={'typeData'} checked={measurementForm.signal.typeData} />
+                <RadioButton onEmit={(val) => setMeasurementForm(form => ({ ...form, signal: { ...form.signal, typeData: val } }))} label={'Mapping'} value={'mapping'} name={'typeData'} checked={measurementForm.signal.typeData} />
               </div>
-              {/* <Label name={'Measurement technique'} /> */}
-              {/* <RadioButton onEmit={(val) => handleSetMeasurements('measurement_technique', val)} name={'measurement_techn'} checked={measurements.measurement_technique} label={'FTIR (Fourier-Transformed Infrared Spectroscopy)'} value={'ftir'} /> */}
             </div>
           )
         }
@@ -470,7 +496,7 @@ export default function MeasurementFormPage() {
         />
       </div>
       <div className='mt-4 flex justify-end'>
-        <Button type={'submit'} onEmit={() => handleCreateExperiment()} color={'primary'} name={'Create measurement'} />
+        <Button type={'submit'} onEmit={() => handleCreateExperiment()} color={'primary'} name={ `${measurementId ? 'Update' : 'Create'} measurement`} />
       </div>
     </>
   )

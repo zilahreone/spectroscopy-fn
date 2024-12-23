@@ -54,8 +54,8 @@ export default function DataList({ listName }) {
     })
     return () => {
       // console.log(listName);
-      setDataList([])
-      setTHead([])
+      // setDataList([])
+      // setTHead([])
     }
   }, [listName])
 
