@@ -37,8 +37,8 @@ export default function DataList({ listName }) {
         setTHead(['No.', 'Name.', 'Sample', 'Technique', 'Instrument', 'Equipment', 'Update at', 'Tools'])
         return arrList.map((data, index) => ({...data, tbody: [index + 1, data.name, data.sample?.name, data.technique?.name, data.instrument?.name, data.equipmentType?.name, convertUTCDateToLocalDate(data.updateAt), [upRight, deleteIcon]]}))
         case 'measurement':
-        setTHead(['No.', 'Name.', 'Experiment', 'Technique', 'Type of Data', 'Update at', 'Tools'])
-        return arrList.map((data, index) => ({ ...data, tbody: [index + 1, data.name, data.experiment.name, data.experiment.technique.name, data.typeData, convertUTCDateToLocalDate(data.updateAt), [upRight, deleteIcon]] }))
+        setTHead(['No.', 'Name.', 'Experiment', 'Technique', 'Update at', 'Tools'])
+        return arrList.map((data, index) => ({ ...data, tbody: [index + 1, data.name, data.experiment.name, data.experiment.technique.name, convertUTCDateToLocalDate(data.updateAt), [upRight, deleteIcon]] }))
       default:
         break;
     }

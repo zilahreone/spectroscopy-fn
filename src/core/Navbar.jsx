@@ -27,21 +27,21 @@ export default function Navbar() {
       name: 'Measurements',
       path: '/measurements'
     },
-    {
-      name: 'Analysis',
-      path: '/analysis'
-    },
+    // {
+    //   name: 'Analysis',
+    //   path: '/analysis'
+    // },
     // {
     //   name: 'Spectra',
     //   path: '/spectra'
     // },
+    // {
+    //   name: 'Chemicals',
+    //   path: '/chemicals'
+    // },
     {
-      name: 'Chemicals',
-      path: '/chemicals'
-    },
-    {
-      name: 'Categorys',
-      path: '/categorys'
+      name: 'Categories',
+      path: '/categories'
     },
     {
       name: 'About',

@@ -1,16 +1,47 @@
-import React, { useEffect } from 'react'
-import Stat from '../components/Stat'
-import Button from '../components/actions/Button'
-import { Link, Outlet, useLoaderData, useNavigate } from 'react-router-dom'
-import keycloak from '../service/keycloak'
+import { useNavigate } from 'react-router-dom'
 import SearchInput from '../components/SearchInput'
+import { useEffect, useState } from 'react'
+import api from '../service/api'
+import keycloak from '../service/keycloak'
 
 export default function HomePage() {
   const navigate = useNavigate()
-  const categoryData = useLoaderData([])
+  const [categories, setCategories] = useState([])
+  const [length, setLength] = useState({ data: 0, organizations: 0, categories: 0 })
+  // const categoryData = useLoaderData([])
   // useEffect(() => {
   //   console.log(keycloak.token);
   // }, [])
+  useEffect(() => {
+    // console.log('asdfd');
+    
+    const experiments = api.get(`/api/experiment`, keycloak.token)
+    const organizations = api.get(`/api/organization`, keycloak.token)
+    const categories = api.get(`/api/category`, keycloak.token)
+    Promise.all([experiments, organizations, categories]).then(values => {
+      values.forEach((res, index) => {
+        res.json().then(json => {
+          if (index === 0) {
+            setLength((length) => ({ ...length, data: json.length }))
+          } else if (index === 1) {
+            setLength((length) => ({ ...length, organizations: json.length }))
+          } else if (index === 2) {
+            const jsonMap = json.map(j => ({ 
+              id: j.id, 
+              name: j.name, 
+              title: j.name.charAt(0).toUpperCase() + j.name.slice(1), 
+              src: `./categories/${j.name}.png`
+            }))
+            setCategories(jsonMap)
+            setLength((length) => ({ ...length, categories: jsonMap.length }))
+          }
+        });
+      });
+    })
+    return () => {
+    }
+  }, [])
+  
   const handleSearch = (value) => {
   }
   return (
@@ -26,34 +57,34 @@ export default function HomePage() {
             <SearchInput onEmit={(value) => handleSearch(value)} />
           </div>
           <div className='flex gap-x-2 md:gap-x-8 sm:gap-x-6 pt-11 justify-center'>
-            <div className='cursor-pointer button-hover-animation hover: flex flex-col items-center justify-center rounded-3xl h-[135px] w-[125px] bg-slate-100 bg-opacity-25 font-medium text-[#eae4e9] gap-y-1'>
+            <div className='button-hover-animation hover: flex flex-col items-center justify-center rounded-3xl h-[135px] w-[125px] bg-slate-100 bg-opacity-25 font-medium text-[#eae4e9] gap-y-1'>
               <div className='h-10'>
                 <svg className='w-10' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                   <path fill="#eae4e9" d="M0 120L0 344c0 75.1 60.9 136 136 136l320 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-320 0c-48.6 0-88-39.4-88-88l0-224c0-13.3-10.7-24-24-24S0 106.7 0 120z" />
                   <path fill="#dfe7fd" d="M160 384H512c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H394.5c-17 0-33.3-6.7-45.3-18.7L322.7 50.7c-12-12-28.3-18.7-45.3-18.7H160c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64z" />
                 </svg>
               </div>
-              <p>1508</p>
+              <p>{ length.data }</p>
               <p>Data</p>
             </div>
-            <div className='cursor-pointer button-hover-animation hover: flex flex-col items-center justify-center rounded-3xl h-[135px] w-[125px] bg-slate-100 bg-opacity-25 font-medium text-[#eae4e9] gap-y-1'>
+            <div className='button-hover-animation hover: flex flex-col items-center justify-center rounded-3xl h-[135px] w-[125px] bg-slate-100 bg-opacity-25 font-medium text-[#eae4e9] gap-y-1'>
               <div className='h-10'>
                 <svg className='w-9' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                   <path fill="#eae4e9" d="M267.6 3c-7.2-4-16-4-23.2 0L17.6 128.1C6.7 134.1 0 145.5 0 157.9C0 176.8 15.2 192 34.1 192l443.9 0c18.8 0 34.1-15.2 34.1-34.1c0-12.4-6.7-23.8-17.6-29.8L267.6 3zM228.3 144L88.2 144 256 51.4 423.8 144l-140.1 0c2.7-4.7 4.3-10.2 4.3-16c0-17.7-14.3-32-32-32s-32 14.3-32 32c0 5.8 1.6 11.3 4.3 16zM64 224l0 160c-13.3 0-24 10.7-24 24s10.7 24 24 24l392 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-8 0 0-160-48 0 0 160-64 0 0-160-48 0 0 160-64 0 0-160-48 0 0 160-64 0 0-160-48 0zM32 464c-13.3 0-24 10.7-24 24s10.7 24 24 24l456 0c13.3 0 24-10.7 24-24s-10.7-24-24-24L32 464z" />
                 </svg>
               </div>
-              <p>123</p>
+              <p>{ length.organizations }</p>
               <p>Organization</p>
             </div>
-            <div onClick={() => navigate('/groups')} className='cursor-pointer button-hover-animation hover: flex flex-col items-center justify-center rounded-3xl h-[135px] w-[125px] bg-slate-100 bg-opacity-25 font-medium text-[#eae4e9] gap-y-1'>
+            <div onClick={() => navigate('/categories')} className='cursor-pointer button-hover-animation hover: flex flex-col items-center justify-center rounded-3xl h-[135px] w-[125px] bg-slate-100 bg-opacity-25 font-medium text-[#eae4e9] gap-y-1'>
               <div className='h-10'>
                 <svg className='w-10' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                   <path fill="#eae4e9" className="fa-secondary" d="M0 320L48 192l148 0c-2.6 10.2-4 21-4 32c0 38.2 16.8 72.5 43.3 96L0 320zM224 80A80 80 0 1 1 64 80a80 80 0 1 1 160 0zM404.7 320c26.6-23.5 43.3-57.8 43.3-96c0-11-1.4-21.8-4-32l148 0 48 128-235.3 0zM592 80A80 80 0 1 1 432 80a80 80 0 1 1 160 0z" />
                   <path fill="#dfe7fd" className="fa-primary" d="M320 320a96 96 0 1 0 0-192 96 96 0 1 0 0 192zM512 512L464 352l-288 0L128 512l384 0z" />
                 </svg>
               </div>
-              <p>15</p>
-              <p>Groups</p>
+              <p>{ length.categories }</p>
+              <p>Categories</p>
             </div>
           </div>
         </div>
@@ -73,13 +104,13 @@ export default function HomePage() {
         </div>
         <div className='flex flex-wrap -mx-2 -my-3'>
           {
-            categoryData.map((group, index) => (
-              <div onClick={() => navigate(`/groups/${group.name}`)} key={index} className='px-2 py-3 min-w-[180px] basis-1/5 cursor-pointer'>
+            categories.map((category, index) => (
+              <div onClick={() => navigate(`/categories/${category.name}`)} key={index} className='px-2 py-3 min-w-[180px] basis-1/5 cursor-pointer'>
                 <div className='hover:bg-slate-300 hover:scale-110 hover:-translate-y-1 transition duration-200 rounded-2xl ease-in-out transform hover:rounded-2xl hover:text-persian_green-200'>
-                <div className='flex flex-col border rounded-t-2xl'>
-                  <img className='p-4' src={group.src} alt="" />
-                </div>
-                <p className='p-4 w-full text-center font-medium border-b border-x rounded-b-2xl'>{group.title}</p>
+                  <div className='flex flex-col border rounded-t-2xl'>
+                    <img className='p-4' src={category.src} alt="" />
+                  </div>
+                  <p className='p-4 w-full text-center font-medium border-b border-x rounded-b-2xl'>{category.title}</p>
                 </div>
                 {/* <div key={index} className='min-w-[150px] basis-1/6 hover:rounded-2xl button-hover-animation cursor-pointer hover:bg-slate-300 hover:text-persian_green-200'> */}
               </div>

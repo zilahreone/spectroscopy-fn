@@ -1,12 +1,12 @@
 const baseURL = import.meta.env.VITE_BACKEND_URL
 
 export default {
-  async get(endpoint, token = null) {
+  get(endpoint, token = null) {
     let headers = {}
     if (token) {
       headers['Authorization'] = `Bearer ${token}`
     }
-    return await fetch(baseURL + endpoint, { method: 'GET', headers })
+    return fetch(baseURL + endpoint, { method: 'GET', headers })
   },
 
   post(endpoint, body, token = null) {

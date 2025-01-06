@@ -29,22 +29,23 @@ const eventLogger = (event, error) => {
   switch (event) {
     case 'onAuthSuccess':
       console.log('onAuthSuccess');
-      // // console.log();
-      api.postJSON(`/api/user`, user, keycloak.token).then(resp => {
-        // console.log(resp.status);
-        if (resp.status === 201) {
-          // resp.json().then(json => {
-          //   console.log(json);
-          //   // resp.status === 200 ? setSamplesData(json) : setSamplesData([])
-          // })
-        }
-      })
+      // console.log(keycloak.token);
+      // api.postJSON(`/api/user`, user, keycloak.token).then(resp => {
+      //   // console.log(resp.status);
+      //   if (resp.status === 201) {
+      //     // resp.json().then(json => {
+      //     //   console.log(json);
+      //     //   // resp.status === 200 ? setSamplesData(json) : setSamplesData([])
+      //     // })
+      //   }
+      // })
       break;
     case 'onAuthLogout':
       console.log('logout');
       break;
     case 'onAuthRefreshSuccess':
       console.log('refresh');
+      // console.log(keycloak.token);
       break;
     case 'onTokenExpired':
       console.log('expire');
@@ -78,6 +79,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     onEvent={eventLogger}
     onTokens={tokenLogger}
     autoRefreshToken
+    // isLoadingCheck={() => !keycloak.authenticated}
   >
     {/* <>
         <div>The user is {!keycloak.authenticated ? '' : 'NOT'} authenticated</div>

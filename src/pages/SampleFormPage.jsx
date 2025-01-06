@@ -76,9 +76,9 @@ export default function SampleFormPage() {
       })
     })
     return () => {
-      setChemicals([])
-      setOrganizations([])
-      setCategorys([])
+      // setChemicals([])
+      // setOrganizations([])
+      // setCategorys([])
     }
   }, [])
 
