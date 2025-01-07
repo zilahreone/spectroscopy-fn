@@ -14,15 +14,17 @@ export default function GroupsPage() {
   useEffect(() => {
     api.get(`/api/category/all`, keycloak.token).then(resp => {
       resp.json().then(json => {
-        const jsonMap = json.map(j => ({ 
-          id: j.id, 
-          name: j.name,
-          description: j.description,
-          title: j.name.charAt(0).toUpperCase() + j.name.slice(1), 
-          icon: `./categories/${j.name}.png`,
-          experimentCount: j.samples.reduce((prev, curr) => prev + curr.experiments.length, 0)
-        }))
-        setcategories(jsonMap)
+        if (resp.status === 200) {
+          const jsonMap = json.map(j => ({
+            id: j.id, 
+            name: j.name,
+            description: j.description,
+            title: j.name.charAt(0).toUpperCase() + j.name.slice(1), 
+            icon: `./categories/${j.name}.png`,
+            experimentCount: j.samples.reduce((prev, curr) => prev + curr.experiments.length, 0)
+          }))
+          setcategories(jsonMap)
+        }
       })
     })
     return () => {

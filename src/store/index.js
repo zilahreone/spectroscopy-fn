@@ -68,10 +68,10 @@ const useBearStore = create(
     (set, get) => ({
       credential: null,
       authenthicated: false,
-      path: null,
+      // path: null,
       setCredential: (credential) => set({ credential: credential }),
       setAuthenthicated: (authen) => set({ authenthicated: authen }),
-      setPath: (path) => set({ path: path }),
+      // setPath: (path) => set({ path: path }),
       clearBearStore: () => set({
         credential: null,
         authenthicated: false

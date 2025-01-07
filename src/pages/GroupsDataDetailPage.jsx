@@ -44,7 +44,7 @@ export default function GroupsDataDetailPage() {
     (async () => {
       let plot = []
       // console.log(experimentData.measurements.length);
-      for (const measurement of experimentData.measurements) {
+      for (const measurement of experimentData?.measurements) {
         const result = await fetchFile(measurement.id, measurement.attachment.name)
         const lines = result.split(/\r?\n/g).filter(res => res && !res.includes('#'))
         // console.log(lines.length);
@@ -244,10 +244,10 @@ export default function GroupsDataDetailPage() {
             </tr>
           </tbody>
         </table>
-        <table className="table-zebra w-full text-sm">
-          {
-            experimentData.measurements?.map((measurement, index) => (
-              <tbody className="" key={`measurement-${index}`}>
+        {
+          experimentData.measurements?.map((measurement, index) => (
+            <table key={`measurement-${index}`} className="table-zebra w-full text-sm">
+              <tbody className="" >
                 <tr className="h-6">
                   <td className="pl-8 text-xs font-medium">Name</td>
                   <td className="pl-0" colSpan={3}><div className="badge badge-primary cursor-pointer" onClick={() => navigator(`/measurements/${measurement.name}`)}>{measurement.name}</div></td>
@@ -328,48 +328,11 @@ export default function GroupsDataDetailPage() {
                   <td className="pl-8 text-xs font-medium">File updated</td>
                   <td className="" colSpan={3}>{convertUTCDateToLocalDate(measurement.updateAt)}</td>
                 </tr>
-                {
-                  index < experimentData.measurements.length - 1 && (
-                    <div className="h-2"></div>
-                    // <tr className="h-6">
-                    //   <td colSpan={4}></td>
-                    // </tr>
-                  )
-                }
               </tbody>
-            ))
-          }
-        </table>
+            </table>
+          ))
+        }
       </div>
-      {/* <div className="divider"></div>
-      <div className="flex flex-col gap-4">
-        <p className="font-normal text-sm">Source : XXXXXXXXXXXXXXXXX</p>
-        <div className="flex flex-col gap-2">
-          <p className="font-normal text-sm">Detais</p>
-          <p className="text-sm">
-            There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
-          </p>
-        </div>
-        <div className="flex flex-col font-normal text-sm gap-1">
-          <pre>{JSON.stringify(experimentData, null, 2)}</pre>
-          <div className="flex">
-            <p className="flex-1">Created Date</p>
-            <p className="flex-1">{convertUTCDateToLocalDate(experimentData.createAt)}</p>
-          </div>
-          <div className="flex">
-            <p className="flex-1">Last updated date</p>
-            <p className="flex-1">{convertUTCDateToLocalDate(experimentData.updateAt)}</p>
-          </div>
-          <div className="flex">
-            <p className="flex-1">File format</p>
-            <p className="flex-1">PDF</p>
-          </div>
-          <div className="flex">
-            <p className="flex-1 underline underline-offset-4">File</p>
-            <p className="flex-1">PDF</p>
-          </div>
-        </div>
-      </div> */}
     </div>
   )
 }

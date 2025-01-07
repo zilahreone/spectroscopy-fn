@@ -38,36 +38,40 @@ const parent = (children) => {
 }
 
 const template = (children, isHome = false, isNav = true, isFoot = true) => {
-  return <div className="flex flex-col min-h-screen"
-    style={{
-      backgroundImage: `url(${background})`,
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat',
-    }}
-  >
-    {
-      isNav &&
-      <header className="z-50">
-        <Navbar />
+  return (
+    <div className="flex flex-col min-h-screen"
+      style={{
+        backgroundImage: `url(${background})`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      <RequireAuth>
         {
-          !isHome && (
-            <div className="bg-[#3e228a] bg-opacity-50">
-              <Breadcrumbs />
-            </div>
-          )
+          isNav &&
+          <header className="z-50">
+            <Navbar />
+            {
+              !isHome && (
+                <div className="bg-[#3e228a] bg-opacity-50">
+                  <Breadcrumbs />
+                </div>
+              )
+            }
+          </header>
         }
-      </header>
-    }
-    <div className={`grow`}>
-      {children}
+        <div className={`grow`}>
+          {children}
+        </div>
+        {
+          isFoot &&
+          <footer>
+            <Footer />
+          </footer>
+        }
+      </RequireAuth>
     </div>
-    {
-      isFoot &&
-      <footer>
-        <Footer />
-      </footer>
-    }
-  </div>
+  )
 
 }
 
@@ -83,6 +87,11 @@ const handleLoadCategoryDetail = async ({ id, detail } = param) => {
 }
 
 const router = createBrowserRouter([
+  {
+    path: 'login',
+    id: 'Login',
+    element: <LoginPage />
+  },
   {
     path: '/',
     id: 'Home',

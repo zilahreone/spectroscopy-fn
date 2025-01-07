@@ -1,62 +1,90 @@
-// import './App.css'
-import Navbar from './core/Navbar'
-import Footer from './core/Footer'
-import { Outlet, useLocation } from 'react-router-dom'
-import HomePage from './pages/HomePage'
 import { useEffect, useState } from 'react'
-import { jwtDecode } from 'jwt-decode'
 import useBearStore from './store'
+import { RouterProvider } from 'react-router-dom'
+import router from './router'
+import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web'
 // import { hasGrantedAllScopesGoogle, useGoogleLogin, useGoogleOneTapLogin } from '@react-oauth/google'
 
 function App() {
-  const location = useLocation()
-  const { credential, clearBearStore, setPath } = useBearStore()
-  const [count, setCount] = useState(0);
+  const eventLogger = (event, error) => {
+    // 'onReady' | 'onInitError' | 'onAuthSuccess' | 'onAuthError' | 'onAuthRefreshSuccess' | 'onAuthRefreshError' | 'onAuthLogout' | 'onTokenExpired'
+    // console.log('onKeycloakEvent', event, error)
+    // console.log(event, error)
+    // const { name, email, given_name, family_name, preferred_username, sub } = keycloak.tokenParsed
+    // const user = {
+    //   id: sub,
+    //   name,
+    //   preferredUsername: preferred_username,
+    //   givenName: given_name,
+    //   familyName: family_name,
+    //   email,
+    //   user: keycloak.tokenParsed
+    // }
+    switch (event) {
+      case 'onAuthSuccess':
+        console.log('onAuthSuccess');
+        // setAuthenthicated(true)
+        // setCredential(keycloak.token)
+        // console.log(keycloak.token);
+        // api.postJSON(`/api/user`, user, keycloak.token).then(resp => {
+        //   // console.log(resp.status);
+        //   if (resp.status === 201) {
+        //     // resp.json().then(json => {
+        //     //   console.log(json);
+        //     //   // resp.status === 200 ? setSamplesData(json) : setSamplesData([])
+        //     // })
+        //   }
+        // })
+        break;
+      case 'onAuthLogout':
+        console.log('logout');
+        // setAuthenthicated(false)
+        break;
+      case 'onAuthRefreshSuccess':
+        console.log('refresh');
+        // setAuthenthicated(true)
+        // console.log(keycloak.token);
+        break;
+      case 'onTokenExpired':
+        console.log('expire');
+        // setAuthenthicated(false)
+        break;
+      case 'onReady':
+        console.log('ready');
+        break;
+      default:
+        break;
+    }
+  }
+  const tokenLogger = (tokens) => {
+    // console.log('token', tokens.token)
+    // if (tokens) {
+    //   for (const key in tokens) {
+    //     // console.log(key);
+    //     console.log(jwtDecode(tokens[key]))
+    //   }
+    // }
+  }
 
-  // const login = useGoogleLogin({
-  //   onSuccess: codeResponse => console.log(codeResponse),
-  //   flow: 'auth-code',
-  // })
-
-  // useEffect(() => {
-  // execute on location change
-  // if (credential) {
-  //   const decoded = jwtDecode(credential.credential);
-  //   try {
-  //     // console.log(decoded);
-  //     // setCount(count + 1);
-  //     // console.log(new Date());
-  //     // console.log(new Date(+decoded.exp * 1000));
-  //     console.log(((new Date(+decoded.exp * 1000).getTime() - new Date().getTime()) / 1000) / 60);
-  //     const expireIn = ((new Date(+decoded.exp * 1000).getTime() - new Date().getTime()) / 1000) / 60
-  //     // if (expireIn < 0) {
-  //     //   console.log('clear');
-  //     //   clearBearStore()
-  //     // } else if (expireIn < 11) {
-  //     //   console.log('extend expire')
-  //     // }
-  //     if (location.pathname !== '/login') {
-  //       setPath(location.pathname)
-  //       // console.log('Location changed!', location.pathname)
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
-  // }, [location])
   return (
-    <Outlet />
-    // <div className='flex min-h-screen flex-col'>
-    //   <header className="sticky top-0 z-50">
-    //     <Navbar />
-    //   </header>
-    //   <main className="grow">
-    //     <Outlet />
-    //   </main>
-    //   <footer>
-    //     <Footer />
-    //   </footer>
-    // </div>
+    <></>
+    // <ReactKeycloakProvider authClient={keycloak}>
+    //   <RouterProvider router={router} />
+    // </ReactKeycloakProvider>
+    // <ReactKeycloakProvider
+    //   authClient={keycloak}
+    //   initOptions={{
+    //     onLoad: 'login-required', // check-sso || login-required
+    //     checkLoginIframe: false,
+    //   }}
+    //   LoadingComponent={<>Loading...</>}
+    //   onEvent={eventLogger}
+    //   onTokens={tokenLogger}
+    //   autoRefreshToken
+    // // isLoadingCheck={() => !keycloak.authenticated}
+    // >
+    //   <RouterProvider router={router} />
+    // </ReactKeycloakProvider>
   )
 }
 

@@ -20,22 +20,24 @@ export default function HomePage() {
     const categories = api.get(`/api/category`, keycloak.token)
     Promise.all([experiments, organizations, categories]).then(values => {
       values.forEach((res, index) => {
-        res.json().then(json => {
-          if (index === 0) {
-            setLength((length) => ({ ...length, data: json.length }))
-          } else if (index === 1) {
-            setLength((length) => ({ ...length, organizations: json.length }))
-          } else if (index === 2) {
-            const jsonMap = json.map(j => ({ 
-              id: j.id, 
-              name: j.name, 
-              title: j.name.charAt(0).toUpperCase() + j.name.slice(1), 
-              src: `./categories/${j.name}.png`
-            }))
-            setCategories(jsonMap)
-            setLength((length) => ({ ...length, categories: jsonMap.length }))
-          }
-        });
+        if (res.status === 200) {
+          res.json().then(json => {
+            if (index === 0) {
+              setLength((length) => ({ ...length, data: json.length }))
+            } else if (index === 1) {
+              setLength((length) => ({ ...length, organizations: json.length }))
+            } else if (index === 2) {
+              const jsonMap = json.map(j => ({ 
+                id: j.id, 
+                name: j.name, 
+                title: j.name.charAt(0).toUpperCase() + j.name.slice(1), 
+                src: `./categories/${j.name}.png`
+              }))
+              setCategories(jsonMap)
+              setLength((length) => ({ ...length, categories: jsonMap.length }))
+            }
+          });
+        }
       });
     })
     return () => {

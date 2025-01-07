@@ -1,15 +1,20 @@
 import React, { useEffect } from 'react'
 import { Link, useLocation, useMatches, useNavigate, useNavigation } from 'react-router-dom'
-import keycloak from '../service/keycloak'
+// import keycloak from '../service/keycloak'
 // import Cookies from 'js-cookie'
 // import { googleLogout } from '@react-oauth/google'
 import nectecLogo from '../assets/logo-nectec.png'
 import Breadcrumbs from '../components/Breadcrumbs'
+import useBearStore from '../store'
+import { useKeycloak } from '@react-keycloak/web'
+
 
 export default function Navbar() {
+  const { keycloak, initialized } = useKeycloak();
   const { pathname } = useLocation()
   const location = useLocation()
   const matches = useMatches();
+  // const { authenthicated } = useBearStore()
   const menus = [
     {
       name: 'Home',
@@ -46,11 +51,21 @@ export default function Navbar() {
     {
       name: 'About',
       path: '/about'
-    },
+    }
   ]
+
+  useEffect(() => {
+    // console.log(keycloak.authenticated);
+  }, [])
+
   const handleLogout = () => {
     keycloak.logout()
   }
+
+  const handleLogin = () => {
+    keycloak.login()
+  }
+
 
   const isActiveClass = () => {
     return `/${pathname.split(/\//)[1]}`
@@ -81,10 +96,16 @@ export default function Navbar() {
               </svg>
             </div>
             <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-              <li>
-                <p className='font-normal'>{keycloak.tokenParsed.name}</p>
-              </li>
-              <hr className='my-1' />
+              {
+                keycloak.authenticated && (
+                  <>
+                    <li key='username'>
+                      <p className='font-normal'>{keycloak?.tokenParsed?.name}</p>
+                    </li>
+                    <hr className='my-1' />
+                  </>
+                )
+              }
               {
                 menus.map((menu) => (
                   <li key={menu.name}>
@@ -95,7 +116,7 @@ export default function Navbar() {
                 ))
               }
               <hr className='my-1' />
-              <li><button onClick={() => handleLogout()} className='font-normal'>Logout</button></li>
+              <li><button onClick={() => keycloak.authenticated ? handleLogout() : handleLogin()} className='font-normal'>Log{keycloak.authenticated ? 'out' : 'in'}</button></li>
             </ul>
           </div>
           <div className='hidden md:flex md:gap-x-8 lg:gap-x-12 xl:gap-x-16'>
@@ -106,30 +127,36 @@ export default function Navbar() {
                 </Link>
               ))
             }
-            <div tabIndex={0} role="button" className="dropdown dropdown-end">
-              <div>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className='w-6 h-6'>
-                  <path fill='#FFFFFF' d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" />
-                </svg>
-              </div>
-              {/* <div className="avatar placeholder btn btn-ghost btn-circle">
+            {
+              keycloak.authenticated ? (
+                <div tabIndex={0} role="button" className="dropdown dropdown-end">
+                  <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className='w-6 h-6'>
+                      <path fill='#FFFFFF' d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z" />
+                    </svg>
+                  </div>
+                  {/* <div className="avatar placeholder btn btn-ghost btn-circle">
                   <div className="bg-neutral text-neutral-content rounded-full w-10">
                     <span className="text-l">{keycloak.tokenParsed.name.split(/\s+/g).map(n => n.charAt(0)).join('')}</span>
                   </div>
                 </div> */}
-              <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-                <li>
-                  <p className='font-normal'>{keycloak.tokenParsed.name}</p>
-                  {/* <a className="justify-between">
+                  <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+                    <li>
+                      <p className='font-normal'>{keycloak?.tokenParsed?.name}</p>
+                      {/* <a className="justify-between">
                     Profile
                     <span className="badge">New</span>
                   </a> */}
-                </li>
-                <hr className='my-1' />
-                {/* <li><a>Settings</a></li> */}
-                <li><button onClick={() => handleLogout()}>Logout</button></li>
-              </ul>
-            </div>
+                    </li>
+                    <hr className='my-1' />
+                    {/* <li><a>Settings</a></li> */}
+                    <li><button onClick={() => handleLogout()}>Logout</button></li>
+                  </ul>
+                </div>
+              ) : (
+                <button className={`text-md font-medium text-gray-100 hover:text-orange-600 duration-500 outline-none`} onClick={() => handleLogin()} >Login</button>
+              )
+            }
             {/* <div className="navbar-end">
             </div> */}
           </div>
