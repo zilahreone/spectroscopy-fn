@@ -102,16 +102,8 @@ export default function GroupsDataDetailPage() {
 
   const handleDownload = () => {
     // console.log(experimentData);
-    api.postJSON(`/api/download`, { experimentId: experimentData.id, userId: experimentData.user.id }, keycloak.token).then(resp => {
-      if (resp.status === 201) {
-        // console.log(resp);
-      } else {
-        resp.json().then(json => alert(JSON.stringify(json)))
-      }
-    })
     api.get(`/api/download/experiment/${experimentData.id}`, keycloak.token).then(resp => {
       if (resp.status === 200) {
-        // console.log(...resp.headers);
         resp.blob().then(blob => {
           const blobUrl = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
@@ -123,6 +115,13 @@ export default function GroupsDataDetailPage() {
           // clean up Url
           window.URL.revokeObjectURL(blobUrl);
         })
+        // api.postJSON(`/api/download`, { experimentId: experimentData.id, userId: experimentData.user.id }, keycloak.token).then(resp => {
+        //   if (resp.status === 201) {
+        //     // console.log(resp);
+        //   } else {
+        //     resp.json().then(json => alert(JSON.stringify(json)))
+        //   }
+        // })
       } else {
         resp.json().then(json => alert(JSON.stringify(json)))
       }
@@ -228,7 +227,7 @@ export default function GroupsDataDetailPage() {
             </tr>
             <tr className="h-8">
               <td className="pl-4 font-medium">Category</td>
-              <td className="pl-0"><div className="badge badge-primary cursor-pointer" onClick={() => navigator(`/categorys/${id}`)}>{id}</div></td>
+              <td className="pl-0"><div className="badge badge-primary cursor-pointer" onClick={() => navigator(`/categories/${id}`)}>{id}</div></td>
             </tr>
             <tr className="h-8">
               <td className="pl-4 font-medium">Created date</td>

@@ -52,27 +52,29 @@ export default function SampleFormPage() {
     fetchSampleDetail && arrPromise.push(fetchSampleDetail)
     Promise.all(arrPromise).then((values) => {
       values.forEach((value, index) => {
-        value.json().then(json => {
-          switch (index) {
-            case 0:
-              setChemicals(json)
-              break;
-            case 1:
-              setOrganizations(json.map(form => ({ ...form, temp: form, name: form.name.charAt(0).toUpperCase() + form.name.slice(1), value: form.name })))
-              break;
-            case 2:
-              setCategorys(json.map(form => ({ ...form, temp: form, name: form.name.charAt(0).toUpperCase() + form.name.slice(1), value: form.name })))
-              break;
-            case 3:
-              setForms(json.map(form => ({ ...form, temp: form, name: form.name.charAt(0).toUpperCase() + form.name.slice(1), value: form.name })))
-              break;
-            default:
-              if (sampleId) {
-                handleSetSample(json)
-              }
-              break;
-          }
-        })
+        if (value.status === 200) {
+          value.json().then(json => {
+            switch (index) {
+              case 0:
+                setChemicals(json)
+                break;
+              case 1:
+                setOrganizations(json.map(form => ({ ...form, temp: form, name: form.name.charAt(0).toUpperCase() + form.name.slice(1), value: form.name })))
+                break;
+              case 2:
+                setCategorys(json.map(form => ({ ...form, temp: form, name: form.name.charAt(0).toUpperCase() + form.name.slice(1), value: form.name })))
+                break;
+              case 3:
+                setForms(json.map(form => ({ ...form, temp: form, name: form.name.charAt(0).toUpperCase() + form.name.slice(1), value: form.name })))
+                break;
+              default:
+                if (sampleId) {
+                  handleSetSample(json)
+                }
+                break;
+            }
+          })
+        }
       })
     })
     return () => {

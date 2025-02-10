@@ -31,9 +31,9 @@ export default function ExperimentFormPage() {
     equipmentName: null,
     organizationId: null,
     organizationName: null,
-    userId: keycloak.tokenParsed.sub,
+    userId: keycloak?.tokenParsed?.sub,
     dateCollection: new Date().toISOString(),
-    collectedBy: keycloak.tokenParsed.preferred_username,
+    collectedBy: keycloak?.tokenParsed?.preferred_username,
   })
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function ExperimentFormPage() {
               break;
             default:
               if (experimentId) {
-                console.log(json);
+                // console.log(json);
                 setExperimentForm((experimentForm) => ({
                   ...experimentForm,
                   id: json.id,
